@@ -1,0 +1,21 @@
+{
+  "threshold_mm_yr": 5.0,
+  "hazard_min_class": 2,
+  "reliable_area_km2": 88.0,
+  "high_subsidence_area_km2": 6.5,
+  "flood_prone_area_km2": 0.5,
+  "overlap_area_km2": 0.0,
+  "pct_high_subsidence_in_flood_zone": 0.3,
+  "pct_all_reliable_ground_flood_prone": 0.6,
+  "mean_subsidence_in_flood_mm_yr": -5.7,
+  "disclaimer": "Observed spatial coincidence only. Subsidence is one of several flood drivers (rainfall, drainage capacity, tides, reclamation, sea-level rise); this overlap is not evidence of causation.",
+  "subsidence_grid_bbox_4326": [
+    122.4995,
+    10.6496,
+    122.6306,
+    10.7807
+  ],
+  "hazard_sources": [
+    "data/hazard/unzipped/iloilo-25yr/Iloilo_Flood_25year.shp"
+  ]
+}
