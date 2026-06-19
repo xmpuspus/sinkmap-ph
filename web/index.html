@@ -62,6 +62,10 @@
     <span class="lang"><button id="en" class="on">EN</button><button id="tl">TL</button></span></div>
   <p id="t-sub"></p>
   <p id="t-hint" style="margin-top:6px;"></p>
+  <div id="floods" style="margin-top:9px; font-size:12.5px; display:none;">
+    <b id="t-floods" style="font-size:12px; color:var(--muted);"></b>
+    <div id="flood-toggles" style="margin-top:4px; display:flex; flex-direction:column; gap:3px;"></div>
+  </div>
 </div>
 
 <div id="legend" class="panel">
@@ -108,6 +112,7 @@ const CN = {
     go: "Validated",
     mode_v: "Rate", mode_l: "Watch it sink",
     legend_lapse: "Cumulative ground motion since 2016", sink_more: "more sinking", rise_more: "rising",
+    floods: "Recent flood extents (Sentinel-1)",
   },
   tl: {
     sub: "Gaano kabilis lumulubog ang lupa sa mga lungsod ng Pilipinas, sinukat mula sa Sentinel-1 satellite radar, 2016 hanggang 2025.",
@@ -123,6 +128,7 @@ const CN = {
     go: "Napatunayan",
     mode_v: "Bilis", mode_l: "Panoorin lumubog",
     legend_lapse: "Naipong paggalaw ng lupa mula 2016", sink_more: "mas lumulubog", rise_more: "tumataas",
+    floods: "Saklaw ng kamakailang baha (Sentinel-1)",
   }
 };
 let LANG = "en";
@@ -152,7 +158,7 @@ window.map = map;  // exposed for diagnostics / e2e
 function applyLang(){
   const c = CN[LANG];
   document.documentElement.lang = LANG;
-  for (const [id,key] of Object.entries({"t-sub":"sub","t-hint":"hint","t-disc":"disc","t-method":"method"}))
+  for (const [id,key] of Object.entries({"t-sub":"sub","t-hint":"hint","t-disc":"disc","t-method":"method","t-floods":"floods"}))
     document.getElementById(id).textContent = c[key];
   document.getElementById("mode-v").textContent = c.mode_v;
   document.getElementById("mode-l").textContent = c.mode_l;
@@ -262,6 +268,24 @@ map.on("load", async ()=>{
     if (!LIMPOS[x.id]) continue;
     marker(LIMPOS[x.id], "#b9b2bd", NAMES[x.id]||x.id, ()=>{ showLimited(x); map.flyTo({center:LIMPOS[x.id], zoom:9}); });
   }
+  // recent flood-extent overlays (toggleable)
+  try {
+    const fl = await (await fetch("data/flood-layers.json")).json();
+    const box = document.getElementById("flood-toggles");
+    for (const ev of fl.events){
+      map.addSource("f-"+ev.id, { type:"image", url:ev.png, coordinates:ev.coords });
+      map.addLayer({ id:"f-"+ev.id, type:"raster", source:"f-"+ev.id,
+        layout:{ visibility:"none" }, paint:{ "raster-opacity":0.75 } });
+      const lab = document.createElement("label");
+      lab.style.cssText = "display:flex;gap:6px;align-items:center;cursor:pointer;";
+      const cb = document.createElement("input"); cb.type="checkbox";
+      cb.onchange = ()=> map.setLayoutProperty("f-"+ev.id, "visibility", cb.checked?"visible":"none");
+      lab.appendChild(cb);
+      lab.appendChild(document.createTextNode(`${ev.name}${ev.km2?` · ${ev.km2} km²`:""}`));
+      box.appendChild(lab);
+    }
+    if (fl.events.length) document.getElementById("floods").style.display="block";
+  } catch(e){ /* flood layers optional */ }
   window.__diag.ready = true;
 });
 </script>

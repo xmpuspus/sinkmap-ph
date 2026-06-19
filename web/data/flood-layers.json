@@ -1,0 +1,76 @@
+{
+  "events": [
+    {
+      "id": "carina-habagat-2024",
+      "name": "Typhoon Carina + southwest monsoon",
+      "coords": [
+        [
+          120.8,
+          15.0
+        ],
+        [
+          121.1,
+          15.0
+        ],
+        [
+          121.1,
+          14.4
+        ],
+        [
+          120.8,
+          14.4
+        ]
+      ],
+      "png": "data/flood-extent/carina-habagat-2024.png",
+      "km2": 12.1
+    },
+    {
+      "id": "kristine-trami-2024",
+      "name": "Typhoon Kristine (Trami)",
+      "coords": [
+        [
+          122.9,
+          14.2
+        ],
+        [
+          124.1,
+          14.2
+        ],
+        [
+          124.1,
+          13.0
+        ],
+        [
+          122.9,
+          13.0
+        ]
+      ],
+      "png": "data/flood-extent/kristine-trami-2024.png",
+      "km2": 1.5
+    },
+    {
+      "id": "monsoon-2025",
+      "name": "2025 southwest monsoon (Wipha / Co-may)",
+      "coords": [
+        [
+          120.8,
+          15.0
+        ],
+        [
+          121.1,
+          15.0
+        ],
+        [
+          121.1,
+          14.4
+        ],
+        [
+          120.8,
+          14.4
+        ]
+      ],
+      "png": "data/flood-extent/monsoon-2025.png",
+      "km2": 12.4
+    }
+  ]
+}
