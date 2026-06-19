@@ -33,3 +33,6 @@ docs/**/*.webm
 
 # OS
 .DS_Store
+
+# Vercel local link state
+.vercel/
