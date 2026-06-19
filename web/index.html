@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>sinkmap.ph — how fast the ground is sinking under Philippine cities</title>
+<meta name="description" content="Measured land subsidence (mm/yr) from Sentinel-1 InSAR, 2016-2025, for Philippine cities, shown next to where recent floods hit. A civic measurement, not a forecast." />
+<meta property="og:title" content="sinkmap.ph" />
+<meta property="og:description" content="How fast the ground is sinking under Philippine cities, measured from satellite radar." />
+<meta property="og:image" content="og-card.png" />
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<style>
+  :root{ --ink:#10212b; --muted:#5b6b75; --line:#e2e8ec; --sink:#b2182b; --rise:#2166ac; --bg:#f7f9fa; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; height:100%; font-family:-apple-system,Helvetica,Arial,sans-serif; color:var(--ink); background:var(--bg); }
+  #map{ position:absolute; inset:0; }
+  .panel{ position:absolute; z-index:2; background:#fff; border:1px solid var(--line); border-radius:10px; box-shadow:0 1px 8px rgba(16,33,43,.08); }
+  #head{ top:12px; left:12px; right:12px; max-width:430px; padding:14px 16px; }
+  #head h1{ margin:0 0 2px; font-size:18px; letter-spacing:-.2px; }
+  #head p{ margin:4px 0 0; font-size:13px; line-height:1.45; color:var(--muted); }
+  .row{ display:flex; gap:8px; align-items:center; margin-top:8px; }
+  .lang{ margin-left:auto; font-size:12px; }
+  .lang button{ border:1px solid var(--line); background:#fff; border-radius:6px; padding:3px 8px; cursor:pointer; color:var(--muted); font-size:12px; }
+  .lang button.on{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  #legend{ bottom:16px; left:12px; padding:11px 13px; font-size:12px; max-width:230px; }
+  #legend b{ font-size:12px; }
+  .ramp{ height:11px; border-radius:3px; margin:7px 0 3px;
+    background:linear-gradient(90deg,#b2182b,#ef8a62,#fddbc7,#f7f7f7,#d1e5f0,#67a9cf,#2166ac); }
+  .ramp-x{ display:flex; justify-content:space-between; color:var(--muted); font-size:11px; }
+  #card{ display:none; top:12px; right:12px; width:300px; max-width:calc(100% - 24px); padding:0; overflow:hidden; }
+  #card .c-h{ padding:13px 15px 10px; border-bottom:1px solid var(--line); }
+  #card .c-h h2{ margin:0; font-size:16px; }
+  #card .rate{ font-size:30px; font-weight:700; letter-spacing:-.5px; margin:8px 0 2px; }
+  #card .rate small{ font-size:14px; font-weight:500; color:var(--muted); }
+  #card .body{ padding:12px 15px 14px; font-size:13px; line-height:1.5; }
+  #card .kv{ display:flex; justify-content:space-between; gap:10px; padding:4px 0; border-bottom:1px dashed var(--line); }
+  #card .kv span:last-child{ text-align:right; color:var(--muted); }
+  #card .note{ margin-top:10px; font-size:12px; color:var(--muted); }
+  #card .close{ position:absolute; top:10px; right:12px; cursor:pointer; color:var(--muted); font-size:18px; line-height:1; }
+  .pin{ width:14px; height:14px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.35); cursor:pointer; }
+  .lab{ font-size:11px; font-weight:600; background:rgba(255,255,255,.82); padding:1px 5px; border-radius:4px; transform:translate(10px,-9px); white-space:nowrap; }
+  #foot{ bottom:16px; right:12px; max-width:300px; padding:10px 13px; font-size:11px; color:var(--muted); line-height:1.45; }
+  #foot a{ color:var(--ink); }
+  .badge{ display:inline-block; font-size:11px; font-weight:600; padding:1px 7px; border-radius:20px; }
+  .b-go{ background:#e7f3ec; color:#1a7f48; } .b-lim{ background:#f0eef0; color:#8a7f8a; }
+  @media(max-width:560px){ #head{max-width:none;} #card{top:auto; bottom:96px; right:12px; left:12px; width:auto;} #foot{display:none;} }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<div id="head" class="panel">
+  <div class="row"><h1 id="t-title">sinkmap.ph</h1>
+    <span class="lang"><button id="en" class="on">EN</button><button id="tl">TL</button></span></div>
+  <p id="t-sub"></p>
+  <p id="t-hint" style="margin-top:6px;"></p>
+</div>
+
+<div id="legend" class="panel">
+  <b id="t-legend"></b>
+  <div class="ramp"></div>
+  <div class="ramp-x"><span id="t-sink"></span><span>0</span><span id="t-rise"></span></div>
+</div>
+
+<div id="card" class="panel">
+  <span class="close" onclick="document.getElementById('card').style.display='none'">×</span>
+  <div class="c-h"><h2 id="cd-name"></h2><div class="rate" id="cd-rate"></div></div>
+  <div class="body" id="cd-body"></div>
+</div>
+
+<div id="foot" class="panel">
+  <span id="t-disc"></span>
+  <div style="margin-top:6px;"><a href="methodology.html" id="t-method">Methodology &amp; data</a></div>
+</div>
+
+<script>
+const CN = {
+  en: {
+    sub: "How fast the ground is sinking under Philippine cities, measured from Sentinel-1 satellite radar, 2016 to 2025.",
+    hint: "Red is sinking, blue is rising. Tap a marker for the measured rate.",
+    legend: "Vertical ground velocity",
+    sink: "sinking 60+ mm/yr", rise: "rising 20",
+    disc: "Measurement, not a forecast. Subsidence is one of several flood drivers (rainfall, drainage, tides, reclamation, sea level); any flood overlap is spatial coincidence, not proof of cause. All from public satellite data.",
+    method: "Methodology & data",
+    rate_lead: "Ground sinking up to", peryr: "mm/yr",
+    anchor: "Published rate", reproduces: "Reproduces the published",
+    confidence: "Confidence", flood: "On flood-prone ground", background: "vs all measured ground",
+    limited: "Coherence-limited", limited_body: "The satellite signal here is too decorrelated over this area for a reliable rate with this method. It would need persistent-scatterer InSAR or a tighter urban area.",
+    go: "Validated",
+  },
+  tl: {
+    sub: "Gaano kabilis lumulubog ang lupa sa mga lungsod ng Pilipinas, sinukat mula sa Sentinel-1 satellite radar, 2016 hanggang 2025.",
+    hint: "Pula ay lumulubog, asul ay tumataas. Pindutin ang marker para sa sinukat na bilis.",
+    legend: "Bilis ng paggalaw ng lupa (patayo)",
+    sink: "lumulubog 60+ mm/taon", rise: "tumataas 20",
+    disc: "Sukat, hindi hula. Ang paglubog ay isa lamang sa mga sanhi ng baha (ulan, drainage, taog, reclamation, taas ng dagat); ang anumang pagsabay sa baha ay pagkakataon sa espasyo, hindi patunay ng sanhi. Lahat mula sa pampublikong datos ng satellite.",
+    method: "Metodolohiya at datos",
+    rate_lead: "Lupa lumulubog hanggang", peryr: "mm/taon",
+    anchor: "Nailathalang bilis", reproduces: "Tumutugma sa nailathalang",
+    confidence: "Kumpiyansa", flood: "Sa lupang madaling bahain", background: "kumpara sa lahat ng sinukat",
+    limited: "Limitado ang kohirensiya", limited_body: "Masyadong magulo ang signal ng satellite dito para sa maaasahang bilis sa pamamaraang ito. Kailangan ng persistent-scatterer InSAR o mas masikip na lugar-urban.",
+    go: "Napatunayan",
+  }
+};
+let LANG = "en";
+window.__diag = { ready:false, cities:0, layers:0 };
+
+const NAMES = {
+  "metro-manila":"Metro Manila / Bulacan", "cebu-mandaue":"Cebu / Mandaue",
+  "iloilo":"Iloilo City", "legazpi":"Legazpi", "davao":"Davao",
+};
+
+const map = new maplibregl.Map({
+  container: "map",
+  style: {
+    version: 8,
+    sources: { carto: { type:"raster",
+      tiles:["https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+             "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"],
+      tileSize:256, attribution:"© OpenStreetMap, © CARTO" } },
+    layers: [{ id:"carto", type:"raster", source:"carto" }]
+  },
+  center: [121.4, 13.6], zoom: 5.1, attributionControl: true,
+});
+map.addControl(new maplibregl.NavigationControl({showCompass:false}), "bottom-right");
+window.map = map;  // exposed for diagnostics / e2e
+
+function applyLang(){
+  const c = CN[LANG];
+  document.documentElement.lang = LANG;
+  for (const [id,key] of Object.entries({"t-sub":"sub","t-hint":"hint","t-legend":"legend",
+    "t-sink":"sink","t-rise":"rise","t-disc":"disc","t-method":"method"}))
+    document.getElementById(id).textContent = c[key];
+  document.getElementById("en").classList.toggle("on", LANG==="en");
+  document.getElementById("tl").classList.toggle("on", LANG==="tl");
+}
+document.getElementById("en").onclick = ()=>{ LANG="en"; applyLang(); };
+document.getElementById("tl").onclick = ()=>{ LANG="tl"; applyLang(); };
+
+function marker(lngLat, color, label, onClick){
+  const el = document.createElement("div");
+  const pin = document.createElement("div"); pin.className="pin"; pin.style.background=color;
+  el.appendChild(pin);
+  const lab = document.createElement("div"); lab.className="lab"; lab.textContent=label; el.appendChild(lab);
+  pin.onclick = onClick;
+  return new maplibregl.Marker({element:el, anchor:"center"}).setLngLat(lngLat).addTo(map);
+}
+
+function showCity(c){
+  const t = CN[LANG], card=document.getElementById("card");
+  document.getElementById("cd-name").textContent = NAMES[c.id] || c.id;
+  document.getElementById("cd-rate").innerHTML =
+    `${Math.round(c.rate_mm_yr)} <small>${t.peryr}</small>`;
+  let h = `<div style="margin:-4px 0 8px;font-size:12px;color:var(--muted)">${t.rate_lead} ${c.rate_mm_yr} ${t.peryr} (2016–2025).</div>`;
+  h += `<span class="badge b-go">${t.go}</span>`;
+  h += `<div style="height:8px"></div>`;
+  if (c.anchor_mm_yr) h += `<div class="kv"><span>${t.anchor} (Aslan 2024)</span><span>${c.anchor_mm_yr} ${t.peryr}</span></div>`;
+  h += `<div class="kv"><span>${t.confidence}</span><span>${c.confidence}</span></div>`;
+  if (c.flood_pct_high_sub!=null)
+    h += `<div class="kv"><span>${t.flood}</span><span>${c.flood_pct_high_sub}% (${t.background} ${c.flood_pct_background}%)</span></div>`;
+  if (c.peak_mm_yr && c.peak_mm_yr > c.rate_mm_yr*1.5)
+    h += `<div class="note">Localized hotspot up to ${c.peak_mm_yr} ${t.peryr} (likely coastal reclamation).</div>`;
+  document.getElementById("cd-body").innerHTML = h;
+  card.style.display="block";
+}
+
+function showLimited(x, lngLat){
+  const t = CN[LANG], card=document.getElementById("card");
+  document.getElementById("cd-name").textContent = NAMES[x.id]||x.id;
+  document.getElementById("cd-rate").innerHTML = `<small>${t.limited}</small>`;
+  document.getElementById("cd-body").innerHTML =
+    `<span class="badge b-lim">${t.limited}</span><div class="note">${t.limited_body}</div>`;
+  card.style.display="block";
+}
+
+map.on("load", async ()=>{
+  applyLang();
+  const data = await (await fetch("data/cities.json")).json();
+  // velocity image overlays + markers
+  for (const c of data.cities){
+    const b = c.bounds;
+    map.addSource("v-"+c.id, { type:"image", url:c.png,
+      coordinates:[[b.west,b.north],[b.east,b.north],[b.east,b.south],[b.west,b.south]] });
+    map.addLayer({ id:"v-"+c.id, type:"raster", source:"v-"+c.id, paint:{ "raster-opacity":0.85 } });
+    window.__diag.layers++;
+    const sinking = c.rate_mm_yr >= 30 ? "#b2182b" : (c.rate_mm_yr >= 12 ? "#ef8a62" : "#f4a582");
+    marker(c.center, sinking, `${NAMES[c.id]} · ${Math.round(c.rate_mm_yr)}`, ()=>{
+      showCity(c); map.flyTo({center:c.center, zoom:11});
+    });
+    window.__diag.cities++;
+  }
+  // coherence-limited markers (honest: show where the method has limits)
+  const LIMPOS = { legazpi:[123.745,13.14], davao:[125.5,7.07] };
+  for (const x of (data.coherence_limited||[])){
+    if (!LIMPOS[x.id]) continue;
+    marker(LIMPOS[x.id], "#b9b2bd", NAMES[x.id]||x.id, ()=>{ showLimited(x); map.flyTo({center:LIMPOS[x.id], zoom:9}); });
+  }
+  window.__diag.ready = true;
+});
+</script>
+</body>
+</html>

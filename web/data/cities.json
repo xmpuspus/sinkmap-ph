@@ -1,0 +1,82 @@
+{
+  "vmin": -60.0,
+  "vmax": 20.0,
+  "cities": [
+    {
+      "id": "metro-manila",
+      "bounds": {
+        "west": 120.8782,
+        "south": 14.72785,
+        "east": 121.18943,
+        "north": 15.33359
+      },
+      "center": [
+        121.0338,
+        15.0307
+      ],
+      "rate_mm_yr": 72.1,
+      "peak_mm_yr": 72.1,
+      "anchor_mm_yr": 109,
+      "ratio": 0.66,
+      "confidence": "high",
+      "verdict": "GO",
+      "flood_pct_high_sub": 41.0,
+      "flood_pct_background": 8.4,
+      "png": "data/velocity/metro-manila.png"
+    },
+    {
+      "id": "cebu-mandaue",
+      "bounds": {
+        "west": 123.83934,
+        "south": 10.24864,
+        "east": 124.02114,
+        "north": 10.42098
+      },
+      "center": [
+        123.9302,
+        10.3348
+      ],
+      "rate_mm_yr": 10.1,
+      "peak_mm_yr": 35.6,
+      "anchor_mm_yr": 11,
+      "ratio": 0.91,
+      "confidence": "high",
+      "verdict": "GO",
+      "flood_pct_high_sub": 18.1,
+      "flood_pct_background": 2.0,
+      "png": "data/velocity/cebu-mandaue.png"
+    },
+    {
+      "id": "iloilo",
+      "bounds": {
+        "west": 122.49947,
+        "south": 10.64978,
+        "east": 122.63043,
+        "north": 10.78074
+      },
+      "center": [
+        122.565,
+        10.7153
+      ],
+      "rate_mm_yr": 9.8,
+      "peak_mm_yr": 17.6,
+      "anchor_mm_yr": 9,
+      "ratio": 1.09,
+      "confidence": "high",
+      "verdict": "GO",
+      "flood_pct_high_sub": 0.3,
+      "flood_pct_background": 0.6,
+      "png": "data/velocity/iloilo.png"
+    }
+  ],
+  "coherence_limited": [
+    {
+      "id": "legazpi",
+      "note": "coherence-limited (vegetated coastal AOI)"
+    },
+    {
+      "id": "davao",
+      "note": "coherence-limited (upland AOI)"
+    }
+  ]
+}

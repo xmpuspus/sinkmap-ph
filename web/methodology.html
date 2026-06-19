@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>sinkmap.ph — methodology &amp; data</title>
+<meta name="description" content="How sinkmap.ph measures land subsidence from Sentinel-1 InSAR, what it validates against, its assumptions, error sources, and the public-record disclaimer." />
+<style>
+  :root{ --ink:#10212b; --muted:#5b6b75; --line:#e2e8ec; --bg:#fbfcfd; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,Helvetica,Arial,sans-serif; line-height:1.6; }
+  .wrap{ max-width:760px; margin:0 auto; padding:32px 20px 80px; }
+  a{ color:#1a5b8a; } h1{ font-size:26px; letter-spacing:-.3px; margin:0 0 4px; }
+  h2{ font-size:18px; margin:30px 0 8px; } .lede{ color:var(--muted); font-size:15px; margin:0 0 8px; }
+  p,li{ font-size:14.5px; } code{ background:#eef2f4; padding:1px 5px; border-radius:4px; font-size:13px; }
+  table{ border-collapse:collapse; width:100%; margin:10px 0; font-size:13.5px; }
+  th,td{ text-align:left; padding:7px 9px; border-bottom:1px solid var(--line); }
+  th{ color:var(--muted); font-weight:600; }
+  .go{ color:#1a7f48; font-weight:600; } .lim{ color:#8a7f8a; }
+  .box{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin:14px 0; }
+  .disc{ background:#fbf6ee; border-color:#ece0cb; font-size:13.5px; }
+  .back{ display:inline-block; margin-bottom:14px; font-size:14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="index.html">&larr; Back to the map</a>
+<h1>Methodology &amp; data</h1>
+<p class="lede">sinkmap.ph is a measurement of how fast the ground is moving under Philippine cities, from open satellite radar. It is not a forecast and not a verdict on any one place.</p>
+
+<h2>What this measures (and what it does not)</h2>
+<p><b>Subsidence rate only.</b> The map shows measured vertical ground velocity in millimeters per year, 2016 to 2025, plus where that coincides with flood-prone ground. It does not predict which buildings will flood, does not assign blame, and does not issue per-building verdicts. What happens to any one place is a question for engineers and hydrologists on the ground.</p>
+
+<h2>How the rate is measured</h2>
+<ul>
+<li><b>Source:</b> Sentinel-1 C-band radar (European Space Agency / Copernicus), descending track, ~40 acquisitions per city subsampled quarterly across 2016-2025.</li>
+<li><b>Interferograms:</b> short-baseline (SBAS) pairs processed on demand by Alaska Satellite Facility HyP3, then inverted to a displacement time-series and a velocity with MintPy.</li>
+<li><b>Line-of-sight to vertical:</b> radar measures motion along its line of sight. We convert to pseudo-vertical by dividing by the cosine of the incidence angle, under the <b>vertical-dominant assumption</b> (valid for groundwater, delta and reclamation subsidence; not for landslides). Single descending track; no full ascending+descending decomposition in this version.</li>
+<li><b>Reference:</b> velocities are relative to a stable, coherent reference point (InSAR has no absolute datum on its own). For Metro Manila that is bedrock-derived Sierra Madre piedmont.</li>
+<li><b>Tropospheric correction:</b> an empirical phase-elevation correction (no external weather model needed).</li>
+<li><b>Map color datum:</b> on the map, each city is colored relative to its own measured-area median (the standard relative-InSAR convention), so stable ground reads as stable and only ground that is measurably moving is colored. The validation rates below use the stable-reference datum.</li>
+</ul>
+
+<h2>Validation</h2>
+<p>No public downloadable PH subsidence raster exists to compare against, so each city is checked against the published maximum rate in Aslan et al. 2024 (Sentinel-1 InSAR + GNSS, 2014-2020). The pass condition is the same sign, location, and order of magnitude (within a factor of two).</p>
+<table>
+<tr><th>City</th><th>Published mm/yr</th><th>Measured mm/yr</th><th>Result</th></tr>
+<tr><td>Metro Manila / Bulacan</td><td>109</td><td>72</td><td class="go">validated</td></tr>
+<tr><td>Cebu / Mandaue</td><td>11</td><td>10</td><td class="go">validated</td></tr>
+<tr><td>Iloilo</td><td>9</td><td>10</td><td class="go">validated</td></tr>
+<tr><td>Legazpi</td><td>29</td><td>&mdash;</td><td class="lim">coherence-limited</td></tr>
+<tr><td>Davao</td><td>38</td><td>&mdash;</td><td class="lim">coherence-limited</td></tr>
+</table>
+<p>The fastest sinking in Metro Manila is inland in the Bulacan/Pampanga lowland (around 15.18&deg;N), consistent with the published maximum location. Cebu also shows a localized faster-sinking cluster (about 35 mm/yr) at the southern coast, consistent with coastal reclamation. Legazpi and Davao are <b>coherence-limited</b>: the radar signal over those small vegetated or upland areas is too decorrelated for a reliable rate with this method. They are reported as honest non-results, not forced numbers, and would need persistent-scatterer InSAR or a tighter urban area.</p>
+
+<h2>Flood coincidence (correlation, not causation)</h2>
+<p>Recent flood extents are derived independently from Sentinel-1 pre/post backscatter change (Typhoon Carina + monsoon 2024, 2025 monsoon, Typhoon Kristine 2024). The flood-prone baseline is Project NOAH return-period hazard. We then measure how much fast-sinking ground sits on flood-prone ground:</p>
+<ul>
+<li>Metro Manila: 41% of high-subsidence ground is flood-prone, against 8% of all measured ground (about 5x).</li>
+<li>Cebu / Mandaue: 18% against 2% (about 9x).</li>
+<li>Iloilo: no preferential coincidence with the NOAH baseline (its chronic flooding may be drainage or tidal, outside a return-period depth model).</li>
+</ul>
+<div class="box disc"><b>Disclaimer.</b> This is observed spatial coincidence, not proof of cause. Subsidence is one of several flood drivers alongside rainfall, drainage capacity, tides, reclamation, and sea-level rise.</div>
+
+<h2>Error sources</h2>
+<p>Atmospheric (tropospheric water-vapor) phase delay; phase-unwrapping errors; DEM error; the choice of reference point; and the vertical-dominant assumption itself. Absolute rates are relative to an assumed-stable reference (no co-located GNSS benchmark). Coverage is limited to where the radar stays coherent: dense urban ground holds, vegetated and steep terrain decorrelates.</p>
+
+<h2>Data &amp; licensing</h2>
+<p>Copernicus Sentinel-1 (ESA); HyP3 (NASA / Alaska Satellite Facility); MintPy; JRC Global Surface Water; Project NOAH / UP NOAH hazard maps; Aslan et al. 2024 for the validation anchors. Code is MIT; derived data CC-BY-4.0.</p>
+<div class="box disc">All data is from public sources. This tool computes statistical and physical indicators only. Any specific allegation requires independent investigation and corroboration.</div>
+</div>
+</body>
+</html>
