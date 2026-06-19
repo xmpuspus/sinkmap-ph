@@ -56,7 +56,10 @@
           "date": "2025-10",
           "png": "data/lapse/metro-manila/07.png"
         }
-      ]
+      ],
+      "buildings_on_sinking_ground": 1881,
+      "buildings_threshold_mm_yr": 15.0,
+      "exposure_geojson": "data/exposure/metro-manila.geojson"
     },
     {
       "id": "cebu-mandaue",
@@ -112,7 +115,10 @@
           "date": "2025-10",
           "png": "data/lapse/cebu-mandaue/07.png"
         }
-      ]
+      ],
+      "buildings_on_sinking_ground": 562,
+      "buildings_threshold_mm_yr": 8.0,
+      "exposure_geojson": "data/exposure/cebu-mandaue.geojson"
     },
     {
       "id": "iloilo",
@@ -168,7 +174,10 @@
           "date": "2025-10",
           "png": "data/lapse/iloilo/07.png"
         }
-      ]
+      ],
+      "buildings_on_sinking_ground": 409,
+      "buildings_threshold_mm_yr": 6.0,
+      "exposure_geojson": "data/exposure/iloilo.geojson"
     }
   ],
   "coherence_limited": [

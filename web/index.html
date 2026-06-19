@@ -113,6 +113,7 @@ const CN = {
     mode_v: "Rate", mode_l: "Watch it sink",
     legend_lapse: "Cumulative ground motion since 2016", sink_more: "more sinking", rise_more: "rising",
     floods: "Recent flood extents (Sentinel-1)",
+    exposure: "Buildings on fast-sinking ground",
   },
   tl: {
     sub: "Gaano kabilis lumulubog ang lupa sa mga lungsod ng Pilipinas, sinukat mula sa Sentinel-1 satellite radar, 2016 hanggang 2025.",
@@ -129,6 +130,7 @@ const CN = {
     mode_v: "Bilis", mode_l: "Panoorin lumubog",
     legend_lapse: "Naipong paggalaw ng lupa mula 2016", sink_more: "mas lumulubog", rise_more: "tumataas",
     floods: "Saklaw ng kamakailang baha (Sentinel-1)",
+    exposure: "Mga gusali sa mabilis lumulubog na lupa",
   }
 };
 let LANG = "en";
@@ -228,6 +230,8 @@ function showCity(c){
   h += `<div class="kv"><span>${t.confidence}</span><span>${c.confidence}</span></div>`;
   if (c.flood_pct_high_sub!=null)
     h += `<div class="kv"><span>${t.flood}</span><span>${c.flood_pct_high_sub}% (${t.background} ${c.flood_pct_background}%)</span></div>`;
+  if (c.buildings_on_sinking_ground!=null)
+    h += `<div class="kv"><span>${t.exposure}</span><span>${c.buildings_on_sinking_ground.toLocaleString()} (&gt;${c.buildings_threshold_mm_yr} ${t.peryr})</span></div>`;
   if (c.peak_mm_yr && c.peak_mm_yr > c.rate_mm_yr*1.5)
     h += `<div class="note">Localized hotspot up to ${c.peak_mm_yr} ${t.peryr} (likely coastal reclamation).</div>`;
   document.getElementById("cd-body").innerHTML = h;
@@ -256,6 +260,11 @@ map.on("load", async ()=>{
       coordinates:[[b.west,b.north],[b.east,b.north],[b.east,b.south],[b.west,b.south]] });
     map.addLayer({ id:"v-"+c.id, type:"raster", source:"v-"+c.id, paint:{ "raster-opacity":0.85 } });
     window.__diag.layers++;
+    if (c.exposure_geojson){  // glow on buildings sitting on fast-sinking ground
+      map.addSource("e-"+c.id, { type:"geojson", data:c.exposure_geojson });
+      map.addLayer({ id:"e-"+c.id, type:"circle", source:"e-"+c.id, paint:{
+        "circle-radius":3, "circle-color":"#ff5a1f", "circle-opacity":0.5, "circle-blur":0.5 } });
+    }
     const sinking = c.rate_mm_yr >= 30 ? "#b2182b" : (c.rate_mm_yr >= 12 ? "#ef8a62" : "#f4a582");
     marker(c.center, sinking, `${NAMES[c.id]} · ${Math.round(c.rate_mm_yr)}`, ()=>{
       showCity(c); map.flyTo({center:c.center, zoom:11});

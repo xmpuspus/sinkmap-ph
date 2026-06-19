@@ -28,8 +28,10 @@ Where the sinking ground meets flood-prone ground (NOAH 25-year hazard): in Metr
 Manila 41% of high-subsidence ground is flood-prone against 8% of all measured
 ground (about 5x); in Cebu 18% against 2% (about 9x); Iloilo shows no preferential
 coincidence. Full write-ups in `docs/findings/`. The map is a single-file MapLibre
-site with a velocity layer, a 2016-2025 "watch it sink" time slider, and
-toggleable flood extents (`make serve`, then `web/index.html`).
+site with a velocity layer, a 2016-2025 "watch it sink" time slider, toggleable
+flood extents, and a building-exposure read (OSM buildings on fast-sinking ground:
+~1,900 in Metro Manila above 15 mm/yr, ~560 in Cebu, ~410 in Iloilo). `make serve`,
+then `web/index.html`.
 
 ## What this measures
 
@@ -118,9 +120,9 @@ hotspot accumulating ground motion across the decade.*
 
 ## Roadmap (honest "not yet")
 
-- **Building exposure glow.** How many buildings sit on fast-sinking ground needs a
-  footprint layer (Microsoft / Google Open Buildings or Overture for PH); that fetch
-  and tiling is a separate step, not in this version.
+- **Richer building exposure.** The current exposure read uses OSM footprints via
+  Overpass; a complete count would use Microsoft / Google Open Buildings or Overture
+  for PH (denser coverage than OSM in some areas).
 - **Legazpi and Davao.** Coherence-limited under this areal SBAS method; would need
   persistent-scatterer InSAR or a tighter urban AOI.
 - **Metro Manila coastal CAMANAVA.** The current grid covers the inland Bulacan belt;
