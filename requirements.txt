@@ -1,0 +1,18 @@
+# Phase 0 (InSAR recon + submission) + flood pillar. Verified installed on Python 3.9.6.
+asf-search==9.0.9
+hyp3-sdk==6.2.0
+earthengine-api==1.6.15
+pytest==8.4.2
+
+# Geo stack for the overlay/tiling phase (Phase 2/3). Pins mirror the verified
+# set from the sibling repo shake-exposure-ph on this machine; install when
+# building the correlation + PMTiles layers.
+# geopandas==1.0.1
+# shapely==2.0.7
+# rasterio==1.3.11
+# numpy==2.0.2
+# pandas==2.3.3
+
+# MintPy (InSAR time-series inversion) is NOT pip-friendly: install via conda/
+# mamba per https://github.com/insarlab/MintPy (pulls ISCE, GDAL, h5py). Used
+# by pipeline.insar.velocity after HyP3 products are downloaded.

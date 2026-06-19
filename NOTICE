@@ -1,0 +1,42 @@
+sinkmap.ph
+Copyright (c) 2026 Xavier Puspus
+
+Code is licensed under the MIT License (see LICENSE).
+Derived data products are published under CC-BY-4.0.
+
+This project builds on public data and open tooling. Each source carries its
+own license; attribution below.
+
+Sentinel-1 SAR (SLC, GRD)
+  Copernicus Sentinel data, European Space Agency.
+  Free and open under the Copernicus license.
+
+ASF HyP3 (on-demand InSAR processing)
+  Alaska Satellite Facility, NASA. Earthdata login required.
+  https://hyp3-docs.asf.alaska.edu/
+
+MintPy (InSAR time-series)
+  Miami InSAR Time-series software in Python. GPL-3.0.
+  https://github.com/insarlab/MintPy
+
+Copernicus Global Flood Monitoring (GFM)
+  Copernicus Emergency Management Service.
+
+JRC Global Surface Water
+  European Commission Joint Research Centre.
+
+Project NOAH flood hazard maps
+  University of the Philippines / DOST. Open data.
+
+Building footprints
+  Microsoft Building Footprints and/or Google Open Buildings and/or Overture
+  Maps Foundation, per their respective open licenses.
+
+Published subsidence rates used for validation
+  Aslan et al. (2024), "Ground subsidence in major Philippine metropolitan
+  cities from 2014 to 2020," International Journal of Applied Earth Observation
+  and Geoinformation. Cited for validation; not redistributed.
+
+All inputs are publicly licensed. sinkmap.ph computes statistical indicators
+only. Specific allegations, if any, require independent investigation and
+corroboration.

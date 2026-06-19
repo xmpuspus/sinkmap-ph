@@ -1,0 +1,32 @@
+# Secrets / auth
+.ee-key.json
+.env
+.env.local
+*.pem
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# InSAR products (large, fetched/derived, not committed)
+data/insar/**/*.tif
+data/insar/**/*.h5
+data/insar/raw/
+data/hyp3/
+*.SAFE/
+mintpy_run/
+
+# Tiles (large; go to object storage)
+*.pmtiles
+web/data/**/*.tif
+
+# Demo intermediates
+tmp/
+docs/**/*.webm
+
+# OS
+.DS_Store

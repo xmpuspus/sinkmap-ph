@@ -1,0 +1,24 @@
+{
+  "event": "carina-habagat-2024",
+  "name": "Typhoon Carina + southwest monsoon",
+  "bbox": [
+    120.8,
+    14.4,
+    121.1,
+    15.0
+  ],
+  "direction": "DESCENDING",
+  "id": "carina-habagat-2024",
+  "aoi": "metro-manila",
+  "pre": [
+    "2024-01-01",
+    "2024-03-31"
+  ],
+  "post": [
+    "2024-07-22",
+    "2024-07-31"
+  ],
+  "flooded_km2": 12.053141626415538,
+  "post_scenes": 1,
+  "pre_scenes": 7
+}

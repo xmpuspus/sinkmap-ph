@@ -1,0 +1,27 @@
+{
+  "_comment": "Recent PH flood events to corroborate against subsidence. pre/post are Sentinel-1 windows: pre = a dry reference before the event, post = the flood peak. bbox overrides the named AOI's bbox when the flooded area is wider than one city. Dates from NDRRMC/DROMIC + news (see docs/planning/SCOPE.md).",
+  "events": [
+    {
+      "id": "carina-habagat-2024",
+      "name": "Typhoon Carina + southwest monsoon",
+      "aoi": "metro-manila",
+      "pre": ["2024-01-01", "2024-03-31"],
+      "post": ["2024-07-22", "2024-07-31"]
+    },
+    {
+      "id": "kristine-trami-2024",
+      "name": "Typhoon Kristine (Trami)",
+      "aoi": "legazpi",
+      "bbox": [122.90, 13.00, 124.10, 14.20],
+      "pre": ["2024-08-01", "2024-09-30"],
+      "post": ["2024-10-22", "2024-10-31"]
+    },
+    {
+      "id": "monsoon-2025",
+      "name": "2025 southwest monsoon (Wipha / Co-may)",
+      "aoi": "metro-manila",
+      "pre": ["2025-04-01", "2025-05-31"],
+      "post": ["2025-07-15", "2025-07-28"]
+    }
+  ]
+}
