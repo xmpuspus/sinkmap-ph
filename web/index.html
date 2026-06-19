@@ -40,7 +40,14 @@
   #card .close{ position:absolute; top:10px; right:12px; cursor:pointer; color:var(--muted); font-size:18px; line-height:1; }
   .pin{ width:14px; height:14px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.35); cursor:pointer; }
   .lab{ font-size:11px; font-weight:600; background:rgba(255,255,255,.82); padding:1px 5px; border-radius:4px; transform:translate(10px,-9px); white-space:nowrap; }
-  #foot{ bottom:16px; right:12px; max-width:300px; padding:10px 13px; font-size:11px; color:var(--muted); line-height:1.45; }
+  #lapsep{ bottom:16px; left:50%; transform:translateX(-50%); padding:9px 13px; min-width:260px; }
+  .mode{ border:1px solid var(--line); background:#fff; border-radius:6px; padding:4px 10px; cursor:pointer; font-size:12px; color:var(--muted); }
+  .mode.on{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  #lapse-ctl .row{ margin-top:8px; }
+  #play{ border:1px solid var(--line); background:#fff; border-radius:6px; width:30px; height:26px; cursor:pointer; }
+  #slider{ flex:1; }
+  #frame-date{ font-size:12px; color:var(--muted); min-width:56px; text-align:right; }
+  #foot{ bottom:16px; right:12px; max-width:260px; padding:10px 13px; font-size:11px; color:var(--muted); line-height:1.45; }
   #foot a{ color:var(--ink); }
   .badge{ display:inline-block; font-size:11px; font-weight:600; padding:1px 7px; border-radius:20px; }
   .b-go{ background:#e7f3ec; color:#1a7f48; } .b-lim{ background:#f0eef0; color:#8a7f8a; }
@@ -61,6 +68,17 @@
   <b id="t-legend"></b>
   <div class="ramp"></div>
   <div class="ramp-x"><span id="t-sink"></span><span>0</span><span id="t-rise"></span></div>
+</div>
+
+<div id="lapsep" class="panel">
+  <div class="row" style="gap:6px;">
+    <button id="mode-v" class="mode on"></button>
+    <button id="mode-l" class="mode"></button>
+  </div>
+  <div id="lapse-ctl" style="display:none;">
+    <div class="row"><button id="play">&#9654;</button>
+      <input id="slider" type="range" min="0" max="7" value="7" /><span id="frame-date"></span></div>
+  </div>
 </div>
 
 <div id="card" class="panel">
@@ -88,6 +106,8 @@ const CN = {
     confidence: "Confidence", flood: "On flood-prone ground", background: "vs all measured ground",
     limited: "Coherence-limited", limited_body: "The satellite signal here is too decorrelated over this area for a reliable rate with this method. It would need persistent-scatterer InSAR or a tighter urban area.",
     go: "Validated",
+    mode_v: "Rate", mode_l: "Watch it sink",
+    legend_lapse: "Cumulative ground motion since 2016", sink_more: "more sinking", rise_more: "rising",
   },
   tl: {
     sub: "Gaano kabilis lumulubog ang lupa sa mga lungsod ng Pilipinas, sinukat mula sa Sentinel-1 satellite radar, 2016 hanggang 2025.",
@@ -101,9 +121,12 @@ const CN = {
     confidence: "Kumpiyansa", flood: "Sa lupang madaling bahain", background: "kumpara sa lahat ng sinukat",
     limited: "Limitado ang kohirensiya", limited_body: "Masyadong magulo ang signal ng satellite dito para sa maaasahang bilis sa pamamaraang ito. Kailangan ng persistent-scatterer InSAR o mas masikip na lugar-urban.",
     go: "Napatunayan",
+    mode_v: "Bilis", mode_l: "Panoorin lumubog",
+    legend_lapse: "Naipong paggalaw ng lupa mula 2016", sink_more: "mas lumulubog", rise_more: "tumataas",
   }
 };
 let LANG = "en";
+let MODE = "v", FRAME = 7, CITIES = [], playing = null;
 window.__diag = { ready:false, cities:0, layers:0 };
 
 const NAMES = {
@@ -129,14 +152,54 @@ window.map = map;  // exposed for diagnostics / e2e
 function applyLang(){
   const c = CN[LANG];
   document.documentElement.lang = LANG;
-  for (const [id,key] of Object.entries({"t-sub":"sub","t-hint":"hint","t-legend":"legend",
-    "t-sink":"sink","t-rise":"rise","t-disc":"disc","t-method":"method"}))
+  for (const [id,key] of Object.entries({"t-sub":"sub","t-hint":"hint","t-disc":"disc","t-method":"method"}))
     document.getElementById(id).textContent = c[key];
+  document.getElementById("mode-v").textContent = c.mode_v;
+  document.getElementById("mode-l").textContent = c.mode_l;
   document.getElementById("en").classList.toggle("on", LANG==="en");
   document.getElementById("tl").classList.toggle("on", LANG==="tl");
+  setLegend();
+}
+function setLegend(){
+  const c = CN[LANG];
+  document.getElementById("t-legend").textContent = MODE==="l" ? c.legend_lapse : c.legend;
+  document.getElementById("t-sink").textContent = MODE==="l" ? c.sink_more : c.sink;
+  document.getElementById("t-rise").textContent = MODE==="l" ? c.rise_more : c.rise;
 }
 document.getElementById("en").onclick = ()=>{ LANG="en"; applyLang(); };
 document.getElementById("tl").onclick = ()=>{ LANG="tl"; applyLang(); };
+
+function setOverlay(){
+  for (const c of CITIES){
+    const src = map.getSource("v-"+c.id);
+    if (!src) continue;
+    const url = (MODE==="l" && c.lapse) ? c.lapse[FRAME].png : c.png;
+    src.updateImage({ url });
+  }
+}
+function stopPlay(){ if (playing){ clearInterval(playing); playing=null; document.getElementById("play").innerHTML="&#9654;"; } }
+function setMode(m){
+  MODE = m;
+  document.getElementById("mode-v").classList.toggle("on", m==="v");
+  document.getElementById("mode-l").classList.toggle("on", m==="l");
+  document.getElementById("lapse-ctl").style.display = m==="l" ? "block" : "none";
+  if (m==="l"){ FRAME = +document.getElementById("slider").value; document.getElementById("frame-date").textContent = CITIES[0].lapse[FRAME].date; }
+  else stopPlay();
+  setLegend(); setOverlay();
+}
+document.getElementById("mode-v").onclick = ()=>setMode("v");
+document.getElementById("mode-l").onclick = ()=>setMode("l");
+document.getElementById("slider").oninput = (e)=>{ FRAME=+e.target.value; document.getElementById("frame-date").textContent = CITIES[0].lapse[FRAME].date; setOverlay(); };
+document.getElementById("play").onclick = ()=>{
+  if (playing){ stopPlay(); return; }
+  document.getElementById("play").innerHTML="&#10074;&#10074;";
+  playing = setInterval(()=>{
+    FRAME = (FRAME+1) % CITIES[0].lapse.length;
+    document.getElementById("slider").value = FRAME;
+    document.getElementById("frame-date").textContent = CITIES[0].lapse[FRAME].date;
+    setOverlay();
+  }, 950);
+};
 
 function marker(lngLat, color, label, onClick){
   const el = document.createElement("div");
@@ -175,8 +238,11 @@ function showLimited(x, lngLat){
 }
 
 map.on("load", async ()=>{
-  applyLang();
   const data = await (await fetch("data/cities.json")).json();
+  CITIES = data.cities;
+  if (CITIES[0] && CITIES[0].lapse)
+    document.getElementById("slider").max = CITIES[0].lapse.length - 1;
+  applyLang();
   // velocity image overlays + markers
   for (const c of data.cities){
     const b = c.bounds;

@@ -22,7 +22,41 @@
       "verdict": "GO",
       "flood_pct_high_sub": 41.0,
       "flood_pct_background": 8.4,
-      "png": "data/velocity/metro-manila.png"
+      "png": "data/velocity/metro-manila.png",
+      "lapse": [
+        {
+          "date": "2016-01",
+          "png": "data/lapse/metro-manila/00.png"
+        },
+        {
+          "date": "2017-07",
+          "png": "data/lapse/metro-manila/01.png"
+        },
+        {
+          "date": "2018-10",
+          "png": "data/lapse/metro-manila/02.png"
+        },
+        {
+          "date": "2020-04",
+          "png": "data/lapse/metro-manila/03.png"
+        },
+        {
+          "date": "2021-07",
+          "png": "data/lapse/metro-manila/04.png"
+        },
+        {
+          "date": "2023-01",
+          "png": "data/lapse/metro-manila/05.png"
+        },
+        {
+          "date": "2024-04",
+          "png": "data/lapse/metro-manila/06.png"
+        },
+        {
+          "date": "2025-10",
+          "png": "data/lapse/metro-manila/07.png"
+        }
+      ]
     },
     {
       "id": "cebu-mandaue",
@@ -44,7 +78,41 @@
       "verdict": "GO",
       "flood_pct_high_sub": 18.1,
       "flood_pct_background": 2.0,
-      "png": "data/velocity/cebu-mandaue.png"
+      "png": "data/velocity/cebu-mandaue.png",
+      "lapse": [
+        {
+          "date": "2016-01",
+          "png": "data/lapse/cebu-mandaue/00.png"
+        },
+        {
+          "date": "2017-07",
+          "png": "data/lapse/cebu-mandaue/01.png"
+        },
+        {
+          "date": "2018-10",
+          "png": "data/lapse/cebu-mandaue/02.png"
+        },
+        {
+          "date": "2020-04",
+          "png": "data/lapse/cebu-mandaue/03.png"
+        },
+        {
+          "date": "2021-07",
+          "png": "data/lapse/cebu-mandaue/04.png"
+        },
+        {
+          "date": "2023-01",
+          "png": "data/lapse/cebu-mandaue/05.png"
+        },
+        {
+          "date": "2024-04",
+          "png": "data/lapse/cebu-mandaue/06.png"
+        },
+        {
+          "date": "2025-10",
+          "png": "data/lapse/cebu-mandaue/07.png"
+        }
+      ]
     },
     {
       "id": "iloilo",
@@ -66,7 +134,41 @@
       "verdict": "GO",
       "flood_pct_high_sub": 0.3,
       "flood_pct_background": 0.6,
-      "png": "data/velocity/iloilo.png"
+      "png": "data/velocity/iloilo.png",
+      "lapse": [
+        {
+          "date": "2016-01",
+          "png": "data/lapse/iloilo/00.png"
+        },
+        {
+          "date": "2017-07",
+          "png": "data/lapse/iloilo/01.png"
+        },
+        {
+          "date": "2018-10",
+          "png": "data/lapse/iloilo/02.png"
+        },
+        {
+          "date": "2020-04",
+          "png": "data/lapse/iloilo/03.png"
+        },
+        {
+          "date": "2021-07",
+          "png": "data/lapse/iloilo/04.png"
+        },
+        {
+          "date": "2023-01",
+          "png": "data/lapse/iloilo/05.png"
+        },
+        {
+          "date": "2024-04",
+          "png": "data/lapse/iloilo/06.png"
+        },
+        {
+          "date": "2025-10",
+          "png": "data/lapse/iloilo/07.png"
+        }
+      ]
     }
   ],
   "coherence_limited": [

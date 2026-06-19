@@ -65,6 +65,65 @@ def colorize(aoi_id):
             "east": round(east, 5), "north": round(north, 5)}
 
 
+def _warp_arr_to_4326(arr, gt, epsg):
+    """Put a numpy array on a UTM MEM raster, warp to EPSG:4326, return array."""
+    drv = gdal.GetDriverByName("MEM")
+    L, W = arr.shape
+    src = drv.Create("", W, L, 1, gdal.GDT_Float32)
+    src.SetGeoTransform(gt)
+    from osgeo import osr
+    srs = osr.SpatialReference(); srs.ImportFromEPSG(epsg); src.SetProjection(srs.ExportToWkt())
+    b = src.GetRasterBand(1); b.SetNoDataValue(float("nan")); b.WriteArray(arr.astype("float32"))
+    dst = gdal.Warp("", src, format="MEM", dstSRS="EPSG:4326", srcNodata="nan", dstNodata="nan")
+    return dst.GetRasterBand(1).ReadAsArray().astype("float64")
+
+
+def _rgba_png(arr, vmin, vmax, deadband, out):
+    norm = mcolors.TwoSlopeNorm(vmin=vmin, vcenter=0.0, vmax=vmax)
+    rgba = matplotlib.colormaps["RdBu"](norm(np.clip(arr, vmin, vmax)))
+    alpha = np.clip((np.abs(arr) - deadband) / (deadband * 1.6), 0.0, 1.0) * 0.92
+    rgba[..., 3] = np.where(np.isfinite(arr), alpha, 0.0)
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
+    Image.fromarray((rgba * 255).astype("uint8"), "RGBA").save(out)
+
+
+def sink_lapse(aoi_id, nframes=8):
+    """Export cumulative-vertical-displacement frames (the 'watch it sink' view).
+
+    Reads the MintPy time-series, takes the cumulative motion since the first
+    acquisition at ~nframes evenly-spaced dates, converts LOS->vertical, centers
+    on the area median, colorizes (same red-sink/blue-rise ramp), and writes one
+    PNG per frame. Returns [{date, png}] for the frontend slider.
+    """
+    import h5py
+    run = ROOT / "data" / "insar" / aoi_id / "mintpy_run"
+    with h5py.File(run / "velocity.h5") as f:
+        a = dict(f.attrs)
+    with h5py.File(run / "inputs" / "geometryGeo.h5") as f:
+        inc = f["incidenceAngle"][:]
+    with h5py.File(run / "timeseries.h5") as f:
+        ts = f["timeseries"][:] * 1000.0  # m -> mm (LOS)
+        dates = [d.decode() if isinstance(d, bytes) else str(d) for d in f["date"][:]]
+    gt = (float(a["X_FIRST"]), float(a["X_STEP"]), 0.0, float(a["Y_FIRST"]), 0.0, float(a["Y_STEP"]))
+    epsg = int(a["EPSG"])
+    cosi = np.cos(np.radians(inc))
+    idx = sorted(set(np.linspace(0, len(dates) - 1, nframes).round().astype(int)))
+    # color scale from the final cumulative frame (robust 1% subsidence)
+    final = _warp_arr_to_4326((ts[idx[-1]] - ts[0]) / cosi, gt, epsg)
+    final = final - np.nanmedian(final)
+    span = max(20.0, float(-np.nanpercentile(final, 1)))
+    vmin, vmax = -span, span * 0.4
+    frames = []
+    for k, i in enumerate(idx):
+        disp = _warp_arr_to_4326((ts[i] - ts[0]) / cosi, gt, epsg)
+        disp = disp - np.nanmedian(disp)
+        out = ROOT / "web" / "data" / "lapse" / aoi_id / f"{k:02d}.png"
+        _rgba_png(disp, vmin, vmax, deadband=max(8.0, span * 0.12), out=out)
+        frames.append({"date": f"{dates[i][:4]}-{dates[i][4:6]}", "png": f"data/lapse/{aoi_id}/{k:02d}.png"})
+    print(f"{aoi_id}: {len(frames)} sink-lapse frames, scale +/-{span:.0f} mm")
+    return frames
+
+
 def main():
     cities = []
     for aoi_id in GO_CITIES:
@@ -88,6 +147,7 @@ def main():
             "flood_pct_high_sub": ov.get("pct_high_subsidence_in_flood_zone"),
             "flood_pct_background": ov.get("pct_all_reliable_ground_flood_prone"),
             "png": f"data/velocity/{aoi_id}.png",
+            "lapse": sink_lapse(aoi_id),
         })
         print(f"{aoi_id}: rate {rate} mm/yr, bounds {bounds}")
     payload = {
