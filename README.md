@@ -1,16 +1,29 @@
 # sinkmap.ph
 
-The measured record of how the ground under Philippine cities is sinking, built
-from open satellite data, shown next to where the floods actually hit. It uses
-Sentinel-1 InSAR time-series to map land-subsidence rate (mm/yr) over 2016-2026,
-validates against published rates for Metro Manila and other metros, and
-overlays recent flood extents to show where the sinking and the flooding line up.
-Repository: sinkmap-ph.
+[![License: MIT (code) / CC-BY-4.0 (data)](https://img.shields.io/badge/license-MIT%20%2F%20CC--BY--4.0-blue.svg)](LICENSE)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
+[![InSAR: Sentinel-1 HyP3 + MintPy](https://img.shields.io/badge/InSAR-Sentinel--1%20HyP3%20%2B%20MintPy-success.svg)](docs/findings/metro-manila-v1.md)
+[![Validated: 3 metros vs Aslan 2024](https://img.shields.io/badge/validated-3%20metros%20vs%20Aslan%202024-success.svg)](docs/findings/phase2-multicity.md)
+[![Status: alpha](https://img.shields.io/badge/status-alpha-orange.svg)](README.md)
 
-![sinkmap.ph walkthrough](docs/demo.gif)
+> **sinkmap.ph** is the measured record of how fast the ground is sinking under
+> Philippine cities, from open Sentinel-1 satellite radar, 2016-2025, shown next to
+> where the floods actually hit. Three metros reproduce their published subsidence
+> rates within a factor of two (Metro Manila/Bulacan ~72 mm/yr vs published ~109,
+> Cebu ~10 vs 11, Iloilo ~10 vs 9), and the fastest sinking in Metro Manila is
+> **inland** in the Bulacan/Pampanga lowland, not the coast. Two more cities are
+> coherence-limited and reported as honest non-results, not forced numbers. A
+> single-file MapLibre map carries a velocity layer, a 2016-2025 "watch it sink"
+> time slider, toggleable flood extents, a building-exposure read, and a methodology
+> page, with the coincidence-not-causation disclaimer throughout.
 
-*Real recording of the map: click a city for its measured rate, the published
-reference, and its building exposure; toggle the recent flood extents.*
+[![sinkmap.ph walkthrough](docs/demo.gif)](https://sinkmap-ph.vercel.app)
+
+<sub>Real recording of the live map ([sinkmap-ph.vercel.app](https://sinkmap-ph.vercel.app)):
+click a city for its measured subsidence rate, the published reference, the flood
+coincidence, and the count of buildings on fast-sinking ground; toggle the recent
+Sentinel-1 flood extents. The apex **sinkmap.ph** goes live once its dot.ph A record
+points to Vercel.</sub>
 
 **Status: validated, with a working map.** The pipeline runs end to end and three
 metros reproduce their published rates within a factor of two:
@@ -50,6 +63,30 @@ Subsidence is one driver of flooding among rainfall, drainage, tides,
 reclamation, and sea-level rise. The flood overlay is shown as observed spatial
 coincidence, not as proof of cause.
 
+## What the radar actually shows
+
+InSAR measures the *relative* vertical motion of ground that stays coherent between
+satellite passes. Dense urban fabric (buildings, pavement) holds that coherence and
+gives a clean rate; vegetation, open water, and steep terrain decorrelate. That
+boundary is the honest core of this project:
+
+- It works where the literature's fastest PH subsidence is, the flat dense Metro
+  Manila / Bulacan / Pampanga lowland, and reproduces it (~72 mm/yr, inland). The
+  peak location is reference-invariant, so the "inland, not coastal" finding holds
+  regardless of the reference pixel.
+- It is **coherence-limited** over the small vegetated Legazpi coastal area and the
+  upland Davao AOI: too few coherent pixels for a trustworthy rate, so none is
+  reported there rather than a forced number. The raw frames are fine; the AOI
+  subsets decorrelate. They would need persistent-scatterer InSAR or a tighter
+  urban area.
+- Rates are relative (InSAR has no absolute datum on its own). The map colors each
+  city relative to its own area median, so stable ground reads stable and only
+  ground that is measurably moving is painted; the validation rates use a stable
+  bedrock-piedmont reference. Both are stated in `docs/findings/`.
+- The flood overlay **varies**: strong in Metro Manila and Cebu (fast-sinking ground
+  several times more likely to be flood-prone than background), absent in Iloilo.
+  Not every city fits the thesis, and the map says so.
+
 ## What's in this repo
 
 - **`pipeline/insar/`**: the Phase 0 InSAR pipeline. `search.py` finds the
@@ -63,12 +100,23 @@ coincidence, not as proof of cause.
 - **`pipeline/cities.json` + `pipeline/aoi.py`**: the AOI registry. The source of
   truth for each city's bbox, dry-run tier, physical regime, and the published
   subsidence rate used for validation.
-- **`pipeline/flood/`**, **`pipeline/overlay/`**: the flood-extent derivation
-  (Sentinel-1 in Earth Engine) and the subsidence x flood correlation (Phase 2).
-- **`web/`**: the static MapLibre + PMTiles map (`serve.py` is Range-capable for
-  local PMTiles).
+- **`pipeline/flood/`**, **`pipeline/overlay/`**: `flood_extent.py` derives a
+  Sentinel-1 pre/post flood extent in Earth Engine and exports it as a map overlay;
+  `overlap.py` rasterizes NOAH flood-hazard onto the velocity grid and computes the
+  subsidence x flood-zone statistic with the coincidence disclaimer baked in.
+- **`scripts/`**: build the web layers from the MintPy outputs. `make_web_layers.py`
+  renders the velocity + "watch it sink" frames and `cities.json`; `make_flood_layers.py`
+  exports the flood overlays; `make_exposure.py` counts OSM buildings on fast-sinking
+  ground; `record_sink_lapse.py` records the demo GIF from the live map.
+- **`web/`**: the single-file MapLibre map (`index.html`) with the velocity layer,
+  the 2016-2025 time slider, flood toggles, building-exposure glow, EN/TL copy, and
+  `methodology.html`. `serve.py` is Range-capable for local serving.
+- **`docs/findings/`**: the per-phase write-ups (Metro Manila v1, the multi-city
+  results, the flood overlay), separating verified results from provisional ones.
 - **`docs/planning/`**: the locked spec (`SCOPE.md`, `CITIES.md`,
   `METHOD-decomposition.md`, `BUILD-PROMPT.md`).
+- **`tests/`**: pytest over the LOS->vertical math, the GO/NO-GO gate band, the SBAS
+  pairing, and the AOI registry invariants.
 
 ## What this is not
 
