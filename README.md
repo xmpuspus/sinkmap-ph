@@ -7,13 +7,29 @@ validates against published rates for Metro Manila and other metros, and
 overlays recent flood extents to show where the sinking and the flooding line up.
 Repository: sinkmap-ph.
 
-**Status: Phase 0 (gate not yet passed).** The InSAR pipeline is built and the
-Sentinel-1 stack is verified: a 325-scene descending stack (relative orbit 32,
-frames 540-546) covers Metro Manila and Bulacan continuously from 2016-01-06 to
-2025-12-26. No subsidence rate is published here yet. The Phase 0 gate, running
-that stack through HyP3 + MintPy and reproducing the documented ~100-125 mm/yr
-Bulacan/CAMANAVA hotspot, is the next step and decides whether the project
-scales. Numbers appear only after the gate passes.
+**Status: validated, with a working map.** The pipeline runs end to end and three
+metros reproduce their published rates within a factor of two:
+
+| City | Measured (2016-2025) | Published (Aslan 2024) |
+| --- | --- | --- |
+| Metro Manila / Bulacan | ~72 mm/yr | ~109 mm/yr |
+| Cebu / Mandaue | ~10 mm/yr | 11 mm/yr |
+| Iloilo | ~10 mm/yr | 9 mm/yr |
+
+The fastest sinking in Metro Manila is inland in the Bulacan/Pampanga lowland
+(around 15.18 deg N), consistent with the published maximum location, and it holds
+up under a stable reference and a tropospheric correction. Cebu also shows a
+localized faster-sinking cluster (~35 mm/yr) at the southern coast, consistent with
+reclamation. Two cities (Legazpi, Davao) are **coherence-limited** over small
+vegetated or upland areas and are reported as honest non-results, not forced
+numbers; they would need persistent-scatterer InSAR or a tighter urban area.
+
+Where the sinking ground meets flood-prone ground (NOAH 25-year hazard): in Metro
+Manila 41% of high-subsidence ground is flood-prone against 8% of all measured
+ground (about 5x); in Cebu 18% against 2% (about 9x); Iloilo shows no preferential
+coincidence. Full write-ups in `docs/findings/`. The map is a single-file MapLibre
+site with a velocity layer, a 2016-2025 "watch it sink" time slider, and
+toggleable flood extents (`make serve`, then `web/index.html`).
 
 ## What this measures
 
@@ -83,6 +99,34 @@ make validate AOI=metro-manila VALUE=-105   # or RASTER=path/to/vertical.npy
 
 make test
 ```
+
+Build the web layers from the MintPy outputs and serve the map locally:
+
+```bash
+# render the velocity + sink-lapse PNGs and cities.json (MintPy env, has gdal):
+~/anaconda3/envs/sinkmap-mintpy312/bin/python scripts/make_web_layers.py
+# derive the flood-extent overlays (GEE, personal key):
+SINKMAP_EE_KEY=~/Desktop/leaves-ph/.ee-key.json .venv/bin/python scripts/make_flood_layers.py
+
+make serve   # Range-capable server on :8788, then open web/index.html
+```
+
+![sinkmap.ph watching Metro Manila sink, 2016-2025](docs/sink-lapse.gif)
+
+*Real recording of the map (`scripts/record_sink_lapse.py`): the Bulacan/Pampanga
+hotspot accumulating ground motion across the decade.*
+
+## Roadmap (honest "not yet")
+
+- **Building exposure glow.** How many buildings sit on fast-sinking ground needs a
+  footprint layer (Microsoft / Google Open Buildings or Overture for PH); that fetch
+  and tiling is a separate step, not in this version.
+- **Legazpi and Davao.** Coherence-limited under this areal SBAS method; would need
+  persistent-scatterer InSAR or a tighter urban AOI.
+- **Metro Manila coastal CAMANAVA.** The current grid covers the inland Bulacan belt;
+  full coastal coverage needs additional southern Sentinel-1 frames.
+- **Exploratory cities** (Dagupan, Butuan, Cotabato, and others with no published
+  rate) and the **ascending+descending decomposition** remain future work.
 
 ## Data and responsible use
 
