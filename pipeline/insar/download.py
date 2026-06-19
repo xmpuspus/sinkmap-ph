@@ -57,6 +57,7 @@ def main() -> None:
         if f.suffix == ".zip":
             with zipfile.ZipFile(f) as z:
                 z.extractall(out)
+            f.unlink()  # delete the zip after extract (~32GB/city otherwise doubles)
             unzipped += 1
 
     print(f"downloaded {len(downloaded)} products ({unzipped} unzipped) to {out}")

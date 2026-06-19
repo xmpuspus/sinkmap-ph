@@ -1,0 +1,24 @@
+{
+  "event": "kristine-trami-2024",
+  "name": "Typhoon Kristine (Trami)",
+  "bbox": [
+    122.9,
+    13.0,
+    124.1,
+    14.2
+  ],
+  "direction": "DESCENDING",
+  "id": "kristine-trami-2024",
+  "aoi": "legazpi",
+  "pre": [
+    "2024-08-01",
+    "2024-09-30"
+  ],
+  "post": [
+    "2024-10-22",
+    "2024-10-31"
+  ],
+  "flooded_km2": 1.4529366695822323,
+  "post_scenes": 2,
+  "pre_scenes": 20
+}

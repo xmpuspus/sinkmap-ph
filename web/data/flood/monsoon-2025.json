@@ -1,0 +1,24 @@
+{
+  "event": "monsoon-2025",
+  "name": "2025 southwest monsoon (Wipha / Co-may)",
+  "bbox": [
+    120.8,
+    14.4,
+    121.1,
+    15.0
+  ],
+  "direction": "DESCENDING",
+  "id": "monsoon-2025",
+  "aoi": "metro-manila",
+  "pre": [
+    "2025-04-01",
+    "2025-05-31"
+  ],
+  "post": [
+    "2025-07-15",
+    "2025-07-28"
+  ],
+  "flooded_km2": 12.352632611337702,
+  "post_scenes": 2,
+  "pre_scenes": 5
+}

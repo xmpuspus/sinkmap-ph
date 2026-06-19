@@ -1,0 +1,22 @@
+{
+  "threshold_mm_yr": 20.0,
+  "hazard_min_class": 2,
+  "reliable_area_km2": 988.0,
+  "high_subsidence_area_km2": 35.5,
+  "flood_prone_area_km2": 83.0,
+  "overlap_area_km2": 14.5,
+  "pct_high_subsidence_in_flood_zone": 41.0,
+  "pct_all_reliable_ground_flood_prone": 8.4,
+  "mean_subsidence_in_flood_mm_yr": -40.5,
+  "disclaimer": "Observed spatial coincidence only. Subsidence is one of several flood drivers (rainfall, drainage capacity, tides, reclamation, sea-level rise); this overlap is not evidence of causation.",
+  "subsidence_grid_bbox_4326": [
+    120.8782,
+    14.7281,
+    121.1894,
+    15.3336
+  ],
+  "hazard_sources": [
+    "data/hazard/unzipped/bulacan-25yr/Bulacan_Flood_25year.shp",
+    "data/hazard/unzipped/pampanga-25yr/Pampanga_Flood_25year.shp"
+  ]
+}

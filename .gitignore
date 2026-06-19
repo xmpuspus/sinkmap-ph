@@ -20,6 +20,9 @@ data/hyp3/
 *.SAFE/
 mintpy_run/
 
+# Flood-hazard baseline (large fetched NOAH shapefiles; re-fetchable)
+data/hazard/
+
 # Tiles (large; go to object storage)
 *.pmtiles
 web/data/**/*.tif
