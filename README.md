@@ -7,6 +7,11 @@ validates against published rates for Metro Manila and other metros, and
 overlays recent flood extents to show where the sinking and the flooding line up.
 Repository: sinkmap-ph.
 
+![sinkmap.ph walkthrough](docs/demo.gif)
+
+*Real recording of the map: click a city for its measured rate, the published
+reference, and its building exposure; toggle the recent flood extents.*
+
 **Status: validated, with a working map.** The pipeline runs end to end and three
 metros reproduce their published rates within a factor of two:
 
