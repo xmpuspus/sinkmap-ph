@@ -1,0 +1,21 @@
+{
+  "threshold_mm_yr": 10.0,
+  "hazard_min_class": 2,
+  "reliable_area_km2": 146.6,
+  "high_subsidence_area_km2": 1.5,
+  "flood_prone_area_km2": 2.9,
+  "overlap_area_km2": 0.3,
+  "pct_high_subsidence_in_flood_zone": 18.1,
+  "pct_all_reliable_ground_flood_prone": 2.0,
+  "mean_subsidence_in_flood_mm_yr": -17.8,
+  "disclaimer": "Observed spatial coincidence only. Subsidence is one of several flood drivers (rainfall, drainage capacity, tides, reclamation, sea-level rise); this overlap is not evidence of causation.",
+  "subsidence_grid_bbox_4326": [
+    123.8393,
+    10.249,
+    124.021,
+    10.421
+  ],
+  "hazard_sources": [
+    "data/hazard/unzipped/cebu-25yr/Cebu/PH072200000_FH_25yr.shp"
+  ]
+}

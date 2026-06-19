@@ -40,7 +40,7 @@ mintpy.load.corFile        = {products}/*/*corr.tif
 mintpy.load.demFile        = {products}/*/*dem.tif
 mintpy.load.incAngleFile   = {products}/*/*lv_theta.tif
 mintpy.load.azAngleFile    = {products}/*/*lv_phi.tif
-mintpy.subset.lalo         = {subset}    # crop all products to one common grid over the AOI
+{subset}
 mintpy.network.tempBaseMax = 200
 {ref_line}
 # v1 troposphere: empirical phase-elevation fit, NO external data/CDS key (unlike ERA5/PyAPS).
@@ -71,49 +71,103 @@ def los_to_vertical(los: float, incidence_deg: float) -> float:
     return los / c
 
 
-def write_cfg(aoi_id, ref_yx=None, ref_lat=None, ref_lon=None):
+def write_cfg(aoi_id, ref_yx=None, ref_lat=None, ref_lon=None, min_coh=0.7, clipped=True):
     """Write the MintPy v1 config for an AOI.
 
+    clipped=True points the load at data/insar/<aoi>/clipped (products pre-cropped
+    to one identical AOI grid via clip_products) and uses NO subset. This is the
+    correct path: mintpy.subset.lalo mis-crops these variable-extent HyP3 products
+    (it placed Cebu's grid ~73 km north of the AOI). clipped=False is the legacy
+    subset.lalo path, kept only for the already-processed Metro Manila run.
+
     ref_yx = (row, col) is the OPERATIVE reference (unambiguous on the projected
-    UTM grid; the lat/lon -> UTM conversion is bypassed). ref_lat/ref_lon are
-    kept only as a human-readable label. With neither, MintPy auto-picks via
-    minCoherence (acceptable for a quick pass, but it tends to land on low
-    alluvium, not stable ground -- prefer `pick-reference` then pass --ref-yx).
+    UTM grid; the lat/lon -> UTM conversion is bypassed). With neither, MintPy
+    auto-picks via minCoherence (tends to land on low alluvium -- prefer
+    `pick-reference` then pass --ref-yx).
     """
-    products = REPO_ROOT / "data" / "insar" / aoi_id / "hyp3_products"
+    base = "clipped" if clipped else "hyp3_products"
+    products = REPO_ROOT / "data" / "insar" / aoi_id / base
     cfg = REPO_ROOT / "data" / "insar" / aoi_id / f"sinkmap_{aoi_id}.txt"
     cfg.parent.mkdir(parents=True, exist_ok=True)
 
     if ref_yx is not None:
         row, col = ref_yx
-        label = ""
-        if ref_lat is not None and ref_lon is not None:
-            label = f"  # ~lat {ref_lat}, lon {ref_lon}"
-        ref_line = (
-            f"mintpy.reference.yx        = {row}, {col}{label}   # stable in-mask ground (see pick-reference)"
-        )
+        label = f"  # ~lat {ref_lat}, lon {ref_lon}" if (ref_lat is not None and ref_lon is not None) else ""
+        ref_line = f"mintpy.reference.yx        = {row}, {col}{label}   # stable in-mask ground (see pick-reference)"
     else:
-        ref_line = (
-            "mintpy.reference.minCoherence = 0.85   # auto-pick (fallback; prefer an explicit --ref-yx)"
-        )
+        ref_line = f"mintpy.reference.minCoherence = {min_coh}   # auto-pick (fallback; prefer an explicit --ref-yx)"
 
-    from pipeline import aoi as aoi_registry
-
-    lon0, lat0, lon1, lat1 = aoi_registry.get(aoi_id).bbox
-    subset = f"{lat0}:{lat1},{lon0}:{lon1}"
+    if clipped:
+        subset = "# products pre-clipped to the AOI grid (clip_products); no subset.lalo (it mis-crops HyP3 products)"
+    else:
+        from pipeline import aoi as aoi_registry
+        lon0, lat0, lon1, lat1 = aoi_registry.get(aoi_id).bbox
+        subset = (f"mintpy.subset.lalo         = {lat0}:{lat1},{lon0}:{lon1}"
+                  "   # legacy; mis-crops variable-extent products (prefer clip_products)")
     cfg.write_text(MINTPY_CFG_TEMPLATE.format(products=products, subset=subset, ref_line=ref_line))
     return cfg
 
 
-def pick_stable_reference(run_dir, min_coh=0.75, min_h=40.0, max_h=300.0, edge=20):
+def clip_products(aoi_id, res=80):
+    """Pre-clip every HyP3 product tif to one identical AOI UTM grid via gdal.
+
+    mintpy.subset.lalo mis-crops these variable-extent HyP3 products (it landed
+    Cebu's grid tens of km north of the AOI), so we clip every product to a common
+    grid and load with no subset. The HyP3 .txt metadata (baselines/dates) is
+    copied alongside so prep_hyp3 still works. Returns the clipped dir.
+    """
+    import glob
+    import math
+    import shutil
+
+    from osgeo import gdal  # type: ignore
+    from pyproj import Transformer  # type: ignore
+
+    gdal.UseExceptions()
+    from pipeline import aoi as reg
+
+    lon0, lat0, lon1, lat1 = reg.get(aoi_id).bbox
+    cen = (lon0 + lon1) / 2.0
+    epsg = 32600 + int((cen + 180) // 6) + 1  # UTM north zone for the AOI centroid
+    inv = Transformer.from_crs("EPSG:4326", f"EPSG:{epsg}", always_xy=True)
+    pts = [inv.transform(x, y) for x in (lon0, lon1) for y in (lat0, lat1)]
+    es = [p[0] for p in pts]
+    ns = [p[1] for p in pts]
+    e0, e1 = math.floor(min(es) / res) * res, math.ceil(max(es) / res) * res
+    n0, n1 = math.floor(min(ns) / res) * res, math.ceil(max(ns) / res) * res
+
+    src = REPO_ROOT / "data" / "insar" / aoi_id / "hyp3_products"
+    dst = REPO_ROOT / "data" / "insar" / aoi_id / "clipped"
+    types = ["unw_phase", "corr", "dem", "lv_theta", "lv_phi"]
+    for pd in [d for d in src.iterdir() if d.is_dir()]:
+        od = dst / pd.name
+        od.mkdir(parents=True, exist_ok=True)
+        for t in types:
+            ins = glob.glob(str(pd / f"*_{t}.tif"))
+            if ins:
+                gdal.Warp(str(od / Path(ins[0]).name), ins[0],
+                          outputBounds=(e0, n0, e1, n1), xRes=res, yRes=res,
+                          dstSRS=f"EPSG:{epsg}", resampleAlg="near")
+        for meta in glob.glob(str(pd / "*.txt")):
+            shutil.copy(meta, od / Path(meta).name)
+    return dst
+
+
+class CoherenceLimited(Exception):
+    """Raised when a run has too few coherent/unwrapped pixels for a reference."""
+
+
+def pick_stable_reference(run_dir, edge=15):
     """Pick a defensible stable reference pixel from a loaded MintPy run.
 
-    A trustworthy reference sits on stable ground (elevated piedmont/bedrock,
-    off the subsiding alluvium), is reliably unwrapped (in maskConnComp -- the
-    constraint reference_point.py actually enforces), is coherent, and is not on
-    the noisy grid edge. Above ~max_h the forested slopes get masked out, so the
-    pick is the highest stable ground InSAR still unwraps. Returns a dict with
-    (row, col, lat, lon, height_m, coherence) or raises if no candidate.
+    A trustworthy reference is reliably unwrapped (in maskConnComp -- the
+    constraint reference_point.py enforces), coherent, off the grid edge, and on
+    relatively stable (elevated) ground where available. Different cities have
+    very different terrain: Metro Manila has a high Sierra Madre piedmont, but a
+    small flat coastal city has no high ground at all. So the candidate band is
+    relaxed in tiers (coherence then elevation) until something qualifies; among
+    candidates the score prefers higher coherence and (relatively) higher ground.
+    Raises CoherenceLimited if the run is essentially decorrelated.
     """
     import h5py  # type: ignore
     import numpy as np  # type: ignore
@@ -131,26 +185,30 @@ def pick_stable_reference(run_dir, min_coh=0.75, min_h=40.0, max_h=300.0, edge=2
         hgt = f["height"][:]
         attrs = dict(f.attrs)
 
+    if int((mcc > 0).sum()) == 0 or float(np.nanmax(coh)) < 0.4:
+        raise CoherenceLimited(
+            f"maskConnComp in-mask px={int((mcc > 0).sum())}, max avgSpatialCoh="
+            f"{float(np.nanmax(coh)):.2f} -- too decorrelated for a reliable reference."
+        )
+
     L, W = mcc.shape
     ii, jj = np.mgrid[0:L, 0:W]
-    cand = (
-        (mcc > 0)
-        & (coh >= min_coh)
-        & (hgt >= min_h)
-        & (hgt <= max_h)
-        & (ii >= edge)
-        & (ii < L - edge)
-        & (jj >= edge)
-        & (jj < W - edge)
-    )
+    inside = (ii >= edge) & (ii < L - edge) & (jj >= edge) & (jj < W - edge)
+    base = (mcc > 0) & inside
+    hmax = max(float(np.nanmax(hgt)), 1.0)
+    cand = None
+    # relax coherence then drop the elevation floor until a candidate appears
+    for coh_thr, h_floor in [(0.75, 0.5), (0.7, 0.4), (0.6, 0.3), (0.5, 0.2), (0.4, 0.0)]:
+        h_min = float(np.nanpercentile(hgt[base], h_floor * 100)) if base.any() else 0.0
+        c = base & (coh >= coh_thr) & (hgt >= h_min)
+        if c.any():
+            cand = c
+            break
+    if cand is None or not cand.any():
+        cand = base
     if not cand.any():
-        raise SystemExit(
-            f"no stable in-mask reference candidate (coh>={min_coh}, {min_h}<=h<={max_h}). "
-            f"Relax thresholds or inspect masks in {run_dir}."
-        )
-    # prefer higher coherence, then higher (more stable) elevation
-    score = coh + (hgt / max_h) * 0.5
-    score = np.where(cand, score, -np.inf)
+        raise CoherenceLimited(f"no in-mask, off-edge candidate in {run_dir}")
+    score = np.where(cand, coh + (hgt / hmax) * 0.5, -np.inf)
     i, j = np.unravel_index(np.argmax(score), score.shape)
 
     xf, yf = float(attrs["X_FIRST"]), float(attrs["Y_FIRST"])
