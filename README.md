@@ -9,10 +9,10 @@
 
 > **sinkmap.ph** is the measured record of how fast the ground is sinking under
 > Philippine cities, from open Sentinel-1 satellite radar, 2016-2025, shown next to
-> where the floods actually hit. Six cities are measured across Luzon, the Visayas,
+> where the floods actually hit. Seven cities are measured across Luzon, the Visayas,
 > and Mindanao. Three reproduce their published rates within a factor of two (Metro
-> Manila/Bulacan ~72 mm/yr vs ~109, Cebu ~10 vs 11, Iloilo ~10 vs 9); three more are
-> coverage-gated with no published anchor (Dagupan ~20, Bacolod ~4, Tacloban ~3).
+> Manila/Bulacan ~72 mm/yr vs ~109, Cebu ~10 vs 11, Iloilo ~10 vs 9); four more are
+> coverage-gated with no published anchor (Dagupan ~20, Cavite ~6, Bacolod ~4, Tacloban ~3).
 > The fastest sinking in Metro Manila is **inland** in the Bulacan/Pampanga lowland,
 > not the coast, and Dagupan has lost about 35 cm at its hotspot since 2016. A
 > single-file MapLibre map carries a velocity layer, a 2016-2025 "watch it sink"
@@ -23,14 +23,14 @@
 [![sinkmap.ph walkthrough](docs/demo.gif)](https://sinkmap-ph.vercel.app)
 
 <sub>Real recording of the live map ([sinkmap-ph.vercel.app](https://sinkmap-ph.vercel.app),
-via `scripts/record_demo.py`): the six-city overview, the surprising-findings panel
+via `scripts/record_demo.py`): the nationwide overview, the surprising-findings panel
 (the acceleration layer with on-map callouts), a measured-city card (Dagupan, ~20
 mm/yr, coverage-gated), "watch it sink" accumulating 2016-2025 displacement on Metro
 Manila (the readout climbs to ~325 mm), and a recent Sentinel-1 flood extent toggled
 on. The apex **sinkmap.ph** goes live once its dot.ph A record points to Vercel.</sub>
 
-**Status: validated, with a working map of six cities.** Three metros reproduce
-their published rates within a factor of two; three more (no published anchor) are
+**Status: validated, with a working map of seven cities.** Three metros reproduce
+their published rates within a factor of two; four more (no published anchor) are
 measured and coverage-gated, spanning Luzon, the Visayas, and Mindanao:
 
 | City | Measured (2016-2025) | Published (Aslan 2024) |
@@ -40,9 +40,10 @@ measured and coverage-gated, spanning Luzon, the Visayas, and Mindanao:
 | Iloilo | ~10 mm/yr | 9 mm/yr |
 | Dagupan / Pangasinan | ~20 mm/yr (peak field ~35; ~35 cm lost since 2016) | no published rate |
 | Bacolod / Negros | ~4 mm/yr | no published rate |
+| Cavite coast (Manila Bay) | ~6 mm/yr (reclamation, peak ~17) | no published rate |
 | Tacloban / Leyte | ~3 mm/yr (marginal coverage) | no published rate |
 
-Dagupan, Bacolod, and Tacloban have no Aslan anchor, so the map shows them with a
+Dagupan, Cavite, Bacolod, and Tacloban have no Aslan anchor, so the map shows them with a
 "measured (coverage-gated)" badge, not "validated". A scale-out feasibility scorer
 (`scripts/feasibility.py`) ranks ~120 PH cities for the current method, and a burst-
 InSAR test showed burst is 10x cheaper but cannot measure a regional subsidence
@@ -53,7 +54,7 @@ The fastest sinking in Metro Manila is inland in the Bulacan/Pampanga lowland
 (around 15.18 deg N), consistent with the published maximum location, and it holds
 up under a stable reference and a tropospheric correction. Cebu also shows a
 localized faster-sinking cluster (~35 mm/yr) at the southern coast, consistent with
-reclamation. Two cities (Legazpi, Davao) are **coherence-limited** over small
+reclamation. Three cities (Legazpi, Davao, Cagayan de Oro) are **coherence-limited** over small
 vegetated or upland areas and are reported as honest non-results, not forced
 numbers; they would need persistent-scatterer InSAR or a tighter urban area.
 

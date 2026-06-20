@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Behavioral e2e for the sinkmap.ph web map (91 checks) via agent-browser.
+# Behavioral e2e for the sinkmap.ph web map (92 checks) via agent-browser.
 # Drives the real map and asserts loading, the sink-lapse slider/play, the flood
 # overlays, exposure, place cards, the surprising-findings panel (acceleration /
 # tilt / compound-exposure layers + callouts), and i18n against window.__diag /
@@ -28,8 +28,8 @@ for i in {1..30}; do [ "$(ev 'window.__diag&&window.__diag.ready')" = "true" ] &
 
 # --- load + diagnostics ---
 chk ready "window.__diag.ready"
-chk cities_6 "window.__diag.cities===6"
-chk layers_6 "window.__diag.layers===6"
+chk cities_7 "window.__diag.cities===7"
+chk layers_7 "window.__diag.layers===7"
 chk floods_3 "window.__diag.floods===3"
 chk mode_init_rate "window.__diag.mode==='v'"
 
@@ -58,7 +58,7 @@ chk flood_layer "!!map.getLayer('f-carina-habagat-2024')"
 chk flood_hidden_init "map.getLayoutProperty('f-carina-habagat-2024','visibility')" none
 
 # --- markers + place cards (6 cities + legazpi/davao coherence-limited = 8 pins) ---
-chk markers_8 "document.querySelectorAll('.pin').length===8"
+chk markers_10 "document.querySelectorAll('.pin').length===10"
 chk mm_card_opens "(function(){document.querySelectorAll('.pin')[0].click();return document.getElementById('card').style.display})()" block
 chk mm_rate_72 "document.getElementById('cd-rate').innerText.indexOf('72')>=0"
 chk mm_anchor_109 "document.getElementById('cd-body').innerText.indexOf('109')>=0"
@@ -71,7 +71,8 @@ chk dagupan_rate_20 "(function(){document.querySelectorAll('.pin')[3].click();re
 chk dagupan_measured "document.getElementById('cd-body').innerText.toLowerCase().indexOf('measured')>=0"
 chk dagupan_no_aslan "document.getElementById('cd-body').innerText.toLowerCase().indexOf('aslan')<0"
 chk tacloban_marginal "(function(){document.querySelectorAll('.pin')[5].click();return document.getElementById('cd-body').innerText.toLowerCase().indexOf('provisional')>=0})()"
-chk limited_card "(function(){document.querySelectorAll('.pin')[6].click();return document.getElementById('cd-body').innerText.toLowerCase().indexOf('coherence')>=0})()"
+chk cavite_measured "(function(){document.querySelectorAll('.pin')[6].click();return document.getElementById('cd-body').innerText.toLowerCase().indexOf('measured')>=0})()"
+chk limited_card "(function(){document.querySelectorAll('.pin')[7].click();return document.getElementById('cd-body').innerText.toLowerCase().indexOf('coherence')>=0})()"
 
 # --- sink-lapse: load + play ---
 chk sink_enter "(function(){document.getElementById('mode-l').click();return window.__diag.mode==='l'})()"

@@ -192,6 +192,7 @@ const NAMES = {
   "metro-manila":"Metro Manila / Bulacan", "cebu-mandaue":"Cebu / Mandaue",
   "iloilo":"Iloilo City", "legazpi":"Legazpi", "davao":"Davao",
   "dagupan":"Dagupan / Pangasinan", "bacolod":"Bacolod / Negros", "tacloban":"Tacloban / Leyte",
+  "cavite-coast":"Cavite coast (Manila Bay)", "cagayan-de-oro":"Cagayan de Oro",
 };
 
 const map = new maplibregl.Map({
@@ -401,7 +402,7 @@ map.on("load", async ()=>{
     window.__diag.cities++;
   }
   // coherence-limited markers (honest: show where the method has limits)
-  const LIMPOS = { legazpi:[123.745,13.14], davao:[125.5,7.07] };
+  const LIMPOS = { legazpi:[123.745,13.14], davao:[125.5,7.07], "cagayan-de-oro":[124.655,8.495] };
   for (const x of (data.coherence_limited||[])){
     if (!LIMPOS[x.id]) continue;
     marker(LIMPOS[x.id], "#b9b2bd", NAMES[x.id]||x.id, ()=>{ showLimited(x); map.flyTo({center:LIMPOS[x.id], zoom:9}); });

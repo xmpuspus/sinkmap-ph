@@ -394,6 +394,70 @@
           "cum_mm": -82
         }
       ]
+    },
+    {
+      "id": "cavite-coast",
+      "bounds": {
+        "west": 120.89838,
+        "south": 14.39924,
+        "east": 121.00141,
+        "north": 14.52126
+      },
+      "center": [
+        120.9499,
+        14.4603
+      ],
+      "rate_mm_yr": 6.1,
+      "peak_mm_yr": 17.2,
+      "anchor_mm_yr": null,
+      "ratio": null,
+      "confidence": "high",
+      "verdict": "GO",
+      "flood_pct_high_sub": null,
+      "flood_pct_background": null,
+      "png": "data/velocity/cavite-coast.png",
+      "lapse": [
+        {
+          "date": "2016-01",
+          "png": "data/lapse/cavite-coast/00.png",
+          "cum_mm": 0
+        },
+        {
+          "date": "2017-07",
+          "png": "data/lapse/cavite-coast/01.png",
+          "cum_mm": -29
+        },
+        {
+          "date": "2018-10",
+          "png": "data/lapse/cavite-coast/02.png",
+          "cum_mm": -55
+        },
+        {
+          "date": "2020-04",
+          "png": "data/lapse/cavite-coast/03.png",
+          "cum_mm": -51
+        },
+        {
+          "date": "2021-07",
+          "png": "data/lapse/cavite-coast/04.png",
+          "cum_mm": -83
+        },
+        {
+          "date": "2023-01",
+          "png": "data/lapse/cavite-coast/05.png",
+          "cum_mm": -96
+        },
+        {
+          "date": "2024-04",
+          "png": "data/lapse/cavite-coast/06.png",
+          "cum_mm": -108
+        },
+        {
+          "date": "2025-10",
+          "png": "data/lapse/cavite-coast/07.png",
+          "cum_mm": -119
+        }
+      ]
     }
   ],
   "coherence_limited": [
@@ -404,6 +468,10 @@
     {
       "id": "davao",
       "note": "coherence-limited (upland AOI)"
+    },
+    {
+      "id": "cagayan-de-oro",
+      "note": "coherence-limited (vegetated/coastal AOI)"
     }
   ]
 }

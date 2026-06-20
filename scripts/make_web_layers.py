@@ -25,9 +25,10 @@ ROOT = Path(__file__).resolve().parent.parent
 VMIN, VMAX = -60.0, 20.0  # shared diverging range (mm/yr): <=-60 deep red ... +20 blue
 DEADBAND, FADE = 4.0, 6.0  # |v|<4 mm/yr transparent (stable); full color by |v|=10
 
-GO_CITIES = ["metro-manila", "cebu-mandaue", "iloilo", "dagupan", "bacolod", "tacloban"]
+GO_CITIES = ["metro-manila", "cebu-mandaue", "iloilo", "dagupan", "bacolod", "tacloban", "cavite-coast"]
 LIMITED = {"legazpi": "coherence-limited (vegetated coastal AOI)",
-           "davao": "coherence-limited (upland AOI)"}
+           "davao": "coherence-limited (upland AOI)",
+           "cagayan-de-oro": "coherence-limited (vegetated/coastal AOI)"}
 
 
 def colorize(aoi_id):
