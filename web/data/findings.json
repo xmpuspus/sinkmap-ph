@@ -1,0 +1,278 @@
+{
+  "city": "metro-manila",
+  "layers": {
+    "accel": {
+      "png": "data/accel/metro-manila.png",
+      "bounds": {
+        "west": 120.8782,
+        "south": 14.72785,
+        "east": 121.18943,
+        "north": 15.33359
+      },
+      "legend": {
+        "en": {
+          "left": "speeding up",
+          "right": "slowing"
+        },
+        "tl": {
+          "left": "bumibilis",
+          "right": "bumabagal"
+        }
+      }
+    },
+    "tilt": {
+      "png": "data/tilt/metro-manila.png",
+      "bounds": {
+        "west": 120.8782,
+        "south": 14.72785,
+        "east": 121.18943,
+        "north": 15.33359
+      },
+      "legend": {
+        "en": {
+          "left": "gentle",
+          "right": "steep tilt"
+        },
+        "tl": {
+          "left": "banayad",
+          "right": "matarik"
+        }
+      }
+    },
+    "compound": {
+      "geojson": "data/exposure/metro-manila-flood.geojson",
+      "n": 871
+    }
+  },
+  "findings": [
+    {
+      "id": "acceleration",
+      "layer": "accel",
+      "tag": {
+        "en": "Acceleration",
+        "tl": "Pagbilis"
+      },
+      "title": {
+        "en": "Past the peak, but the field is still spreading",
+        "tl": "Lampas na sa rurok, pero lumalawak pa ang lupa"
+      },
+      "stat": {
+        "en": "294 km² speeding up vs 244 km² slowing",
+        "tl": "294 km² bumibilis vs 244 km² bumabagal"
+      },
+      "blurb": {
+        "en": "The worst hotspot slowed (-96 to -79 mm/yr between the 2016-2020 and 2021-2025 halves), yet more ground sped up than slowed. A zone about 6 km east more than doubled, from -18 to -46 mm/yr. Red is speeding up, green is slowing.",
+        "tl": "Bumagal ang pinakamabilis na lugar (-96 hanggang -79 mm/taon sa pagitan ng 2016-2020 at 2021-2025), pero mas malaking lupa ang bumilis. Isang lugar 6 km sa silangan ang lumampas sa doble, mula -18 hanggang -46 mm/taon. Pula ay bumibilis, berde ay bumabagal."
+      },
+      "fly": {
+        "center": [
+          121.0,
+          15.15
+        ],
+        "zoom": 9.6
+      },
+      "callouts": [
+        {
+          "lngLat": [
+            120.983,
+            15.177
+          ],
+          "label": {
+            "en": "hotspot: slowing (-79 mm/yr)",
+            "tl": "hotspot: bumabagal (-79 mm/taon)"
+          }
+        },
+        {
+          "lngLat": [
+            121.0357,
+            15.1708
+          ],
+          "label": {
+            "en": "6 km east: doubled to -46 mm/yr",
+            "tl": "6 km silangan: doble na, -46 mm/taon"
+          }
+        }
+      ]
+    },
+    {
+      "id": "compound",
+      "layer": "compound",
+      "tag": {
+        "en": "Compound risk",
+        "tl": "Dobleng panganib"
+      },
+      "title": {
+        "en": "Sinking fast and flood-prone at the same time",
+        "tl": "Mabilis lumulubog at madaling bahain nang sabay"
+      },
+      "stat": {
+        "en": "46% of fast-sinking buildings are also flood-prone",
+        "tl": "46% ng mabilis lumulubog na gusali ay madali ring bahain"
+      },
+      "blurb": {
+        "en": "Of 1,881 mapped buildings on ground sinking faster than 15 mm/yr, 871 also sit inside a 25-year flood-prone zone (0.5 m or deeper). Two public layers overlapping, not proof of cause.",
+        "tl": "Sa 1,881 gusaling nasa lupang lumulubog nang higit 15 mm/taon, 871 ang nasa loob din ng 25-taong delikado-sa-baha (0.5 m pataas). Pagsasapaw ng dalawang datos, hindi patunay ng sanhi."
+      },
+      "fly": {
+        "center": [
+          120.97,
+          15.0
+        ],
+        "zoom": 9.4
+      },
+      "callouts": []
+    },
+    {
+      "id": "footprint",
+      "tag": {
+        "en": "Footprint",
+        "tl": "Sakop"
+      },
+      "title": {
+        "en": "The 10 cm subsidence footprint grew from nothing",
+        "tl": "Lumaki mula sa wala ang sakop ng 10 cm na paglubog"
+      },
+      "stat": {
+        "en": "~0 to ~228 km² since 2016 (peak 311 km²)",
+        "tl": "~0 hanggang ~228 km² mula 2016 (rurok 311 km²)"
+      },
+      "blurb": {
+        "en": "In 2016 almost no ground had dropped 10 cm relative to stable. By late 2025, about 228 km² had, peaking near 311 km² in early 2025. Watch it build with the 'Watch it sink' slider.",
+        "tl": "Noong 2016 halos walang lupang bumaba ng 10 cm kumpara sa matatag. Pagdating ng huling bahagi ng 2025, mga 228 km² na, umabot malapit sa 311 km² noong simula ng 2025. Panoorin sa 'Panoorin lumubog' na slider."
+      },
+      "fly": {
+        "center": [
+          121.0,
+          15.05
+        ],
+        "zoom": 9.3
+      },
+      "callouts": []
+    },
+    {
+      "id": "municipality",
+      "tag": {
+        "en": "Most exposed",
+        "tl": "Pinaka-apektado"
+      },
+      "title": {
+        "en": "One town carries most of the exposed ground: San Miguel",
+        "tl": "Isang bayan ang may pinakamaraming apektadong lupa: San Miguel"
+      },
+      "stat": {
+        "en": "San Miguel, Bulacan: 43 km² sinking fast, 17 km² also flood-prone",
+        "tl": "San Miguel, Bulacan: 43 km² mabilis lumulubog, 17 km² madali ring bahain"
+      },
+      "blurb": {
+        "en": "Aggregating per municipality boundary, San Miguel has 43 km² of ground sinking faster than 15 mm/yr, of which 17 km² is also flood-prone, by far the most double-exposed ground of any town in the frame. The fastest inland hotspot sits inside it.",
+        "tl": "Kapag tinipon kada hangganan ng bayan, ang San Miguel ay may 43 km² na lupang lumulubog nang higit 15 mm/taon, kung saan 17 km² ay madali ring bahain, pinakamarami sa lahat ng bayan sa frame. Nasa loob nito ang pinakamabilis na hotspot."
+      },
+      "fly": {
+        "center": [
+          120.983,
+          15.177
+        ],
+        "zoom": 10.2
+      },
+      "callouts": [
+        {
+          "lngLat": [
+            120.983,
+            15.177
+          ],
+          "label": {
+            "en": "fastest inland hotspot",
+            "tl": "pinakamabilis na hotspot"
+          }
+        }
+      ]
+    },
+    {
+      "id": "decoupling",
+      "tag": {
+        "en": "Decoupled",
+        "tl": "Magkahiwalay"
+      },
+      "title": {
+        "en": "The deepest floods are not the fastest sinking",
+        "tl": "Ang pinakamalalim na baha ay hindi ang pinakamabilis lumubog"
+      },
+      "stat": {
+        "en": "sinking >10 mm/yr: 31% Low, 30% Medium, 17% High flood tier",
+        "tl": "lumulubog >10 mm/taon: 31% Mababa, 30% Katamtaman, 17% Mataas na baha"
+      },
+      "blurb": {
+        "en": "By modeled flood-hazard depth class, fast-sinking ground concentrates in the Low and Medium tiers (31% and 30% sinking >10 mm/yr), not the deepest-flooding High tier (17%). Flood depth and sinking rate overlap but are largely separate fields.",
+        "tl": "Ayon sa lalim ng baha, ang mabilis lumulubog na lupa ay nasa Mababa at Katamtamang antas (31% at 30% na >10 mm/taon), hindi sa pinakamalalim na Mataas (17%). Magkasapaw pero magkahiwalay na larangan ang lalim ng baha at bilis ng paglubog."
+      },
+      "fly": {
+        "center": [
+          120.95,
+          14.95
+        ],
+        "zoom": 9.2
+      },
+      "callouts": []
+    },
+    {
+      "id": "tilt",
+      "layer": "tilt",
+      "tag": {
+        "en": "Differential tilt",
+        "tl": "Hindi pantay"
+      },
+      "title": {
+        "en": "Uneven sinking is what breaks roads and pipes",
+        "tl": "Ang hindi pantay na paglubog ang sumisira ng kalsada at tubo"
+      },
+      "stat": {
+        "en": "tilt up to 70 mm/yr per km (p95 18)",
+        "tl": "hilig hanggang 70 mm/taon kada km (p95 18)"
+      },
+      "blurb": {
+        "en": "Uniform settlement is harmless; it is the spatial gradient, where ground drops faster than its neighbor, that cracks roads, snaps pipes, and stresses bridges. Purple marks the steepest tilt, up to 70 mm/yr per km.",
+        "tl": "Hindi nakakapinsala ang pantay na paglubog; ang pagkakaiba sa kalapit na lupa ang bumabasag ng kalsada, pumuputol ng tubo, at nagdidiin sa tulay. Lila ang pinakamatarik na hilig, hanggang 70 mm/taon kada km."
+      },
+      "fly": {
+        "center": [
+          121.0,
+          15.13
+        ],
+        "zoom": 9.8
+      },
+      "callouts": []
+    },
+    {
+      "id": "sea_vs_land",
+      "tag": {
+        "en": "Land vs sea",
+        "tl": "Lupa vs dagat"
+      },
+      "title": {
+        "en": "The land drops far faster than the sea rises",
+        "tl": "Mas mabilis bumaba ang lupa kaysa pagtaas ng dagat"
+      },
+      "stat": {
+        "en": "land ~72 mm/yr vs sea ~5-7 mm/yr",
+        "tl": "lupa ~72 mm/taon vs dagat ~5-7 mm/taon"
+      },
+      "blurb": {
+        "en": "At the Bulacan hotspot the ground drops about 72 mm/yr (measured here). Sea level in Philippine waters is rising roughly 5-7 mm/yr (PAGASA / satellite altimetry). For someone there, the effective rise is dominated about 10 to 1 by the land going down, not the ocean coming up.",
+        "tl": "Sa hotspot ng Bulacan, bumababa ang lupa nang mga 72 mm/taon (sinukat dito). Ang taas ng dagat sa Pilipinas ay tumataas nang mga 5-7 mm/taon (PAGASA / satellite). Para sa naroon, ang epektibong pagtaas ay nangingibabaw nang mga 10 sa 1 dahil sa pagbaba ng lupa, hindi pag-akyat ng dagat."
+      },
+      "fly": {
+        "center": [
+          120.983,
+          15.177
+        ],
+        "zoom": 10.0
+      },
+      "callouts": [],
+      "source": "Subsidence measured (InSAR); sea-level rise cited (PAGASA / satellite altimetry)."
+    }
+  ],
+  "disclaimer": {
+    "en": "Measured ground velocity and observed flood-layer coincidence from public satellite data. Subsidence is one of several flood drivers; overlaps are not proof of cause.",
+    "tl": "Sinukat na bilis ng lupa at pagkakataon ng baha mula sa pampublikong datos ng satellite. Ang paglubog ay isa lamang sa mga sanhi ng baha; ang pagsasapaw ay hindi patunay ng sanhi."
+  }
+}

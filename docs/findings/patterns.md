@@ -88,3 +88,72 @@ subsidence is a regional field, not isolated hotspots.
 By contrast, Cebu has only ~5 km2 sinking >5 mm/yr and Iloilo ~3 km2, concentrated
 on reclaimed/coastal ground. Same phenomenon, two scales: regional in the Central
 Luzon aquifer, pinpoint in the island cities.
+
+## More patterns (2026-06-20, round 3)
+
+Computed by scripts/analysis.py on the Metro Manila MintPy time-series / velocity
+raster. The per-period rates and per-zone rates are differential (each referenced
+to the area's own reliable-pixel median), so a reference or atmosphere drift that
+is common to the scene cancels. Flood overlap is observed coincidence of two
+public layers (InSAR + NOAH), never causation.
+
+### 12. The peak is past, but the field is still spreading
+Finding #1 is true only at the single worst hotspot. Splitting the decade in half
+and fitting a per-pixel rate to each, the inland Bulacan hotspot (15.177 N) slowed
+from **-96 mm/yr (2016-2020) to -79 (2021-2025)** (+17 slower) -- but **more
+ground sped up than slowed down**: 294 km2 accelerated by >3 mm/yr vs 244 km2
+decelerated (robust across cuts: 203 vs 151 km2 at >5 mm/yr, 67 vs 59 at >10). A
+zone ~6 km east of the hotspot (15.171 N, 121.036 E) **doubled its rate, from -18
+to -46 mm/yr** (accel -28). So "Manila past peak" is a statement about the peak,
+not the field: the Central Luzon subsidence kept widening and intensifying around
+the edges through 2021-2025. Acceleration is spatially scattered (126 small
+clusters, largest 0.7 km2), not one blob. Map layer: web/data/accel/.
+
+### 13. Nearly half the most-exposed buildings face both hazards at once
+Of the **1,881** OSM buildings already on fast-sinking ground (>15 mm/yr), **871
+(46%)** also sit inside a NOAH 25-yr flood-prone zone (>=0.5 m). Double-exposed:
+sinking fast AND modeled flood-prone. (OSM under-maps rural buildings, so 1,881 is
+a floor; the 46% double-exposure rate is the headline, not the count.) Coincidence
+of two independent public layers, not causation.
+
+### 14. Flood depth and sinking rate are only loosely coupled
+By NOAH 25-yr flood-hazard class, the share of ground sinking faster than 10 mm/yr
+is **12% (no mapped hazard), 31% (Low 0.1-0.5 m), 30% (Medium 0.5-1.5 m), 17%
+(High >1.5 m)**. Fast-sinking ground concentrates in the Low/Medium tiers, not the
+deepest-flooding High tier. Median subsidence by tier: +0.1 / -0.5 / -2.2 / +0.9
+mm/yr. So the ground modeled to flood deepest is not the fastest-sinking; the two
+risks overlap but are largely separate fields. Caveat: High-hazard zones (active
+river floodways) have the lowest InSAR coverage (0.20 reliable vs 0.49 for
+no-hazard ground), so the High-tier read is on its drier reliable subset.
+
+### 15. The 10 cm subsidence footprint grew from nothing to ~230 km2
+Area whose ground has dropped more than 100 mm (10 cm) since 2016-01 (relative to
+the reliable-area median each date): **~0 km2 in 2016 -> ~228 km2 by Oct 2025**,
+peaking ~311 km2 in early 2025. The >5 cm footprint reached ~337 km2, the >20 cm
+footprint ~102 km2. Seasonal scatter is present (atmospheric), but the decade
+trend is strong, near-monotonic growth. The subsidence is not just deep at a
+point; its measurable footprint widened across Central Luzon.
+
+### 16. One Bulacan town carries most of the exposed ground: San Miguel
+Aggregating fast-sinking pixels per OSM municipality boundary (admin_level 6, by
+relation id -- PH place names repeat), **San Miguel, Bulacan** has **43.4 km2** of
+ground sinking >15 mm/yr, of which **16.8 km2 is also flood-prone** -- by far the
+most double-exposed ground of any town in the frame (next: San Ildefonso 1.6 km2,
+Meycauayan 0.4). The fastest-sinking inland hotspot sits inside San Miguel's
+footprint. (Doña Remedios Trinidad shows 21.6 km2 fast-sinking but ~0 flood-prone
+and is upland/forested, where coherence is weaker -- treated as secondary.)
+
+## Candidate, not headline (round 3)
+
+- **Reclamation is not uniformly fast.** At the flagship made-ground sites
+  themselves the 1 km-buffer median is modest: Cebu South Road Properties -1.3
+  mm/yr, Iloilo Business Park -2.0. The fast coastal subsidence sits on adjacent
+  older ground (Cebu Talisay belt: 1 km median -9.8, min -34.6, consistent with
+  finding #4's ~35 mm/yr cluster). "Reclamation" alone does not predict the rate;
+  fill age, compaction, and drainage do. Stated as nuance, not a takedown of any
+  named development.
+- **Tilt field (layer recompute).** The differential-tilt layer (web/data/tilt/)
+  uses a smoothed-then-gradient method giving Metro Manila p50 5.2, p95 17.5, max
+  70 mm/yr per km. This refines the round-2 finding #9 estimate (p95 ~27, computed
+  with a different smoothing window); both are differential-gradient measures, the
+  layer uses the consistent recompute.

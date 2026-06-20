@@ -30,6 +30,7 @@ web/data/**/*.tif
 # Demo intermediates
 tmp/
 docs/**/*.webm
+docs/verify/
 
 # OS
 .DS_Store
