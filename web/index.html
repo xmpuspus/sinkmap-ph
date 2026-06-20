@@ -263,7 +263,7 @@ function renderFindings(){
   }
 }
 function clearFinding(){
-  for (const k of ["accel","tilt","compound"]) if (map.getLayer("fl-"+k)){
+  for (const k of Object.keys((FINDINGS && FINDINGS.layers) || {})) if (map.getLayer("fl-"+k)){
     map.setLayoutProperty("fl-"+k, "visibility", "none");
     window.__diag.findingLayerVisible[k] = false;
   }

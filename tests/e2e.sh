@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Behavioral e2e for the sinkmap.ph web map (92 checks) via agent-browser.
+# Behavioral e2e for the sinkmap.ph web map (95 checks) via agent-browser.
 # Drives the real map and asserts loading, the sink-lapse slider/play, the flood
 # overlays, exposure, place cards, the surprising-findings panel (acceleration /
 # tilt / compound-exposure layers + callouts), and i18n against window.__diag /
@@ -98,11 +98,13 @@ http asset_findings "data/findings.json" 200
 http asset_accel "data/accel/metro-manila.png" 200
 http asset_tilt "data/tilt/metro-manila.png" 200
 http asset_compound "data/exposure/metro-manila-flood.geojson" 200
+http asset_accel_dagupan "data/accel/dagupan.png" 200
 chk findings_10 "window.__diag.findings===10"
-chk finding_layers_2 "window.__diag.findingLayers===2"
+chk finding_layers_4 "window.__diag.findingLayers===4"
 chk fl_accel "!!map.getLayer('fl-accel')"
 chk fl_tilt "!!map.getLayer('fl-tilt')"
 chk fl_compound "!!map.getLayer('fl-compound')"
+chk fl_accel_dagupan "!!map.getLayer('fl-accel-dagupan')"
 chk fl_accel_hidden_init "map.getLayoutProperty('fl-accel','visibility')" none
 chk drawer_opens "(function(){document.getElementById('fopen').click();return document.getElementById('findings').classList.contains('open')})()"
 chk cards_10 "document.querySelectorAll('#flist .fcard').length===10"
@@ -130,6 +132,7 @@ chk muni_callout_1 "(function(){document.querySelectorAll('#flist .fcard')[3].cl
 chk lapse_clears_finding "(function(){document.querySelectorAll('#flist .fcard')[0].click();document.getElementById('mode-l').click();return window.__diag.activeFinding})()" null
 chk lapse_hides_finding_layer "map.getLayoutProperty('fl-accel','visibility')" none
 chk back_to_rate "(function(){document.getElementById('mode-v').click();return window.__diag.mode})()" v
+chk dagupan_finding_layer "(function(){document.querySelectorAll('#flist .fcard')[7].click();return map.getLayoutProperty('fl-accel-dagupan','visibility')})()" visible
 chk findings_tl "(function(){document.getElementById('ftl').click();return document.querySelector('#flist .fcard .ftag').innerText.toLowerCase().indexOf('pagbilis')>=0})()"
 chk findings_en "(function(){document.getElementById('fen').click();return document.querySelector('#flist .fcard .ftag').innerText.toLowerCase().indexOf('acceleration')>=0})()"
 chk drawer_closes "(function(){document.getElementById('fclose').click();return document.getElementById('findings').classList.contains('open')})()" false

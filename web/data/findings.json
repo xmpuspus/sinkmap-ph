@@ -42,6 +42,44 @@
     "compound": {
       "geojson": "data/exposure/metro-manila-flood.geojson",
       "n": 871
+    },
+    "accel-dagupan": {
+      "png": "data/accel/dagupan.png",
+      "bounds": {
+        "west": 120.278,
+        "south": 15.99823,
+        "east": 120.42203,
+        "north": 16.14226
+      },
+      "legend": {
+        "en": {
+          "left": "speeding up",
+          "right": "slowing"
+        },
+        "tl": {
+          "left": "bumibilis",
+          "right": "bumabagal"
+        }
+      }
+    },
+    "tilt-dagupan": {
+      "png": "data/tilt/dagupan.png",
+      "bounds": {
+        "west": 120.278,
+        "south": 15.99823,
+        "east": 120.42203,
+        "north": 16.14226
+      },
+      "legend": {
+        "en": {
+          "left": "gentle",
+          "right": "steep tilt"
+        },
+        "tl": {
+          "left": "banayad",
+          "right": "matarik"
+        }
+      }
     }
   },
   "findings": [
@@ -276,6 +314,7 @@
         "en": "New city",
         "tl": "Bagong lungsod"
       },
+      "layer": "accel-dagupan",
       "title": {
         "en": "Dagupan: the second fast-sinking delta",
         "tl": "Dagupan: pangalawang mabilis lumubog na delta"

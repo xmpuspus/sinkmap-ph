@@ -44,28 +44,28 @@ def _warp_bounds(tif):
                  "east": round(east, 5), "north": round(north, 5)}
 
 
-def accel_png():
+def accel_png(city=CITY):
     """Acceleration: red = subsidence speeding up, green = slowing, center clear."""
-    arr, bounds = _warp_bounds(ROOT / "data" / "insar" / CITY / "accel.tif")
+    arr, bounds = _warp_bounds(ROOT / "data" / "insar" / city / "accel.tif")
     vmin, vmax = -20.0, 20.0
     norm = mcolors.TwoSlopeNorm(vmin=vmin, vcenter=0.0, vmax=vmax)
     rgba = matplotlib.colormaps["RdYlGn"](norm(np.clip(arr, vmin, vmax)))
     alpha = np.clip((np.abs(arr) - 3.0) / 6.0, 0.0, 1.0) * 0.9
     rgba[..., 3] = np.where(np.isfinite(arr), alpha, 0.0)
-    out = ROOT / "web" / "data" / "accel" / f"{CITY}.png"
+    out = ROOT / "web" / "data" / "accel" / f"{city}.png"
     out.parent.mkdir(parents=True, exist_ok=True)
     Image.fromarray((rgba * 255).astype("uint8"), "RGBA").save(out)
     return bounds
 
 
-def tilt_png():
+def tilt_png(city=CITY):
     """Differential tilt: single-hue purple, alpha scales with gradient steepness."""
-    arr, bounds = _warp_bounds(ROOT / "data" / "insar" / CITY / "tilt.tif")
+    arr, bounds = _warp_bounds(ROOT / "data" / "insar" / city / "tilt.tif")
     rgba = np.zeros(arr.shape + (4,), dtype="float64")
     rgba[..., 0] = 0.482; rgba[..., 1] = 0.121; rgba[..., 2] = 0.635  # #7b1fa2 purple
     alpha = np.clip((arr - 3.0) / 12.0, 0.0, 1.0) * 0.88
     rgba[..., 3] = np.where(np.isfinite(arr), alpha, 0.0)
-    out = ROOT / "web" / "data" / "tilt" / f"{CITY}.png"
+    out = ROOT / "web" / "data" / "tilt" / f"{city}.png"
     out.parent.mkdir(parents=True, exist_ok=True)
     Image.fromarray((rgba * 255).astype("uint8"), "RGBA").save(out)
     return bounds
@@ -94,6 +94,9 @@ def main():
 
     accel_bounds = accel_png()
     tilt_bounds = tilt_png()
+    # per-city analysis layers for the fast new cities (timeseries-only, no auth)
+    dagupan_accel_bounds = accel_png("dagupan")
+    dagupan_tilt_bounds = tilt_png("dagupan")
     cmp_geo, cmp_n = compound_geojson()
 
     hot = acc["hotspot_15.177N_120.983E"]
@@ -207,7 +210,7 @@ def main():
         flip = dg["hotspot"][::-1]  # [lat,lon] -> [lon,lat]
         rate = lambda k: f"{cj[k]['rate_mm_yr']:.0f}"
         findings += [
-            {"id": "dagupan", "tag": {"en": "New city", "tl": "Bagong lungsod"},
+            {"id": "dagupan", "tag": {"en": "New city", "tl": "Bagong lungsod"}, "layer": "accel-dagupan",
              "title": {"en": "Dagupan: the second fast-sinking delta",
                        "tl": "Dagupan: pangalawang mabilis lumubog na delta"},
              "stat": {"en": f"about {loss:.0f} cm lost at the hotspot since 2016",
@@ -247,6 +250,12 @@ def main():
                      "legend": {"en": {"left": "gentle", "right": "steep tilt"},
                                 "tl": {"left": "banayad", "right": "matarik"}}},
             "compound": {"geojson": cmp_geo, "n": cmp_n},
+            "accel-dagupan": {"png": "data/accel/dagupan.png", "bounds": dagupan_accel_bounds,
+                              "legend": {"en": {"left": "speeding up", "right": "slowing"},
+                                         "tl": {"left": "bumibilis", "right": "bumabagal"}}},
+            "tilt-dagupan": {"png": "data/tilt/dagupan.png", "bounds": dagupan_tilt_bounds,
+                             "legend": {"en": {"left": "gentle", "right": "steep tilt"},
+                                        "tl": {"left": "banayad", "right": "matarik"}}},
         },
         "findings": findings,
         "disclaimer": {
