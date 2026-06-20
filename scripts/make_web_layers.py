@@ -113,18 +113,31 @@ def sink_lapse(aoi_id, nframes=8):
     final = final - np.nanmedian(final)
     span = max(20.0, float(-np.nanpercentile(final, 1)))
     vmin, vmax = -span, span * 0.4
+    hot = np.isfinite(final) & (final <= -span * 0.5)  # the fastest-sinking area, for the readout
     frames = []
     for k, i in enumerate(idx):
         disp = _warp_arr_to_4326((ts[i] - ts[0]) / cosi, gt, epsg)
         disp = disp - np.nanmedian(disp)
         out = ROOT / "web" / "data" / "lapse" / aoi_id / f"{k:02d}.png"
         _rgba_png(disp, vmin, vmax, deadband=max(8.0, span * 0.12), out=out)
-        frames.append({"date": f"{dates[i][:4]}-{dates[i][4:6]}", "png": f"data/lapse/{aoi_id}/{k:02d}.png"})
-    print(f"{aoi_id}: {len(frames)} sink-lapse frames, scale +/-{span:.0f} mm")
+        cum = float(np.nanmedian(disp[hot])) if hot.any() else 0.0  # hotspot cumulative since 2016 (mm)
+        frames.append({"date": f"{dates[i][:4]}-{dates[i][4:6]}",
+                       "png": f"data/lapse/{aoi_id}/{k:02d}.png", "cum_mm": round(cum)})
+    print(f"{aoi_id}: {len(frames)} sink-lapse frames, scale +/-{span:.0f} mm, "
+          f"hotspot cumulative {frames[-1]['cum_mm']} mm by {frames[-1]['date']}")
     return frames
 
 
 def main():
+    # carry over exposure fields (added by make_exposure.py) so a rebuild here
+    # does not wipe them; they only change when exposure is recomputed.
+    prev = {}
+    cj = ROOT / "web" / "data" / "cities.json"
+    if cj.exists():
+        for c in json.loads(cj.read_text()).get("cities", []):
+            prev[c["id"]] = {k: c[k] for k in
+                             ("buildings_on_sinking_ground", "buildings_threshold_mm_yr", "exposure_geojson")
+                             if k in c}
     cities = []
     for aoi_id in GO_CITIES:
         res = json.loads((ROOT / "tmp" / "phase2" / f"{aoi_id}-result.json").read_text()) \
@@ -148,6 +161,7 @@ def main():
             "flood_pct_background": ov.get("pct_all_reliable_ground_flood_prone"),
             "png": f"data/velocity/{aoi_id}.png",
             "lapse": sink_lapse(aoi_id),
+            **prev.get(aoi_id, {}),
         })
         print(f"{aoi_id}: rate {rate} mm/yr, bounds {bounds}")
     payload = {

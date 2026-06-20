@@ -26,35 +26,43 @@
       "lapse": [
         {
           "date": "2016-01",
-          "png": "data/lapse/metro-manila/00.png"
+          "png": "data/lapse/metro-manila/00.png",
+          "cum_mm": 0
         },
         {
           "date": "2017-07",
-          "png": "data/lapse/metro-manila/01.png"
+          "png": "data/lapse/metro-manila/01.png",
+          "cum_mm": -41
         },
         {
           "date": "2018-10",
-          "png": "data/lapse/metro-manila/02.png"
+          "png": "data/lapse/metro-manila/02.png",
+          "cum_mm": -98
         },
         {
           "date": "2020-04",
-          "png": "data/lapse/metro-manila/03.png"
+          "png": "data/lapse/metro-manila/03.png",
+          "cum_mm": -166
         },
         {
           "date": "2021-07",
-          "png": "data/lapse/metro-manila/04.png"
+          "png": "data/lapse/metro-manila/04.png",
+          "cum_mm": -208
         },
         {
           "date": "2023-01",
-          "png": "data/lapse/metro-manila/05.png"
+          "png": "data/lapse/metro-manila/05.png",
+          "cum_mm": -273
         },
         {
           "date": "2024-04",
-          "png": "data/lapse/metro-manila/06.png"
+          "png": "data/lapse/metro-manila/06.png",
+          "cum_mm": -295
         },
         {
           "date": "2025-10",
-          "png": "data/lapse/metro-manila/07.png"
+          "png": "data/lapse/metro-manila/07.png",
+          "cum_mm": -325
         }
       ],
       "buildings_on_sinking_ground": 1881,
@@ -85,35 +93,43 @@
       "lapse": [
         {
           "date": "2016-01",
-          "png": "data/lapse/cebu-mandaue/00.png"
+          "png": "data/lapse/cebu-mandaue/00.png",
+          "cum_mm": 0
         },
         {
           "date": "2017-07",
-          "png": "data/lapse/cebu-mandaue/01.png"
+          "png": "data/lapse/cebu-mandaue/01.png",
+          "cum_mm": -7
         },
         {
           "date": "2018-10",
-          "png": "data/lapse/cebu-mandaue/02.png"
+          "png": "data/lapse/cebu-mandaue/02.png",
+          "cum_mm": -10
         },
         {
           "date": "2020-04",
-          "png": "data/lapse/cebu-mandaue/03.png"
+          "png": "data/lapse/cebu-mandaue/03.png",
+          "cum_mm": -39
         },
         {
           "date": "2021-07",
-          "png": "data/lapse/cebu-mandaue/04.png"
+          "png": "data/lapse/cebu-mandaue/04.png",
+          "cum_mm": -52
         },
         {
           "date": "2023-01",
-          "png": "data/lapse/cebu-mandaue/05.png"
+          "png": "data/lapse/cebu-mandaue/05.png",
+          "cum_mm": -46
         },
         {
           "date": "2024-04",
-          "png": "data/lapse/cebu-mandaue/06.png"
+          "png": "data/lapse/cebu-mandaue/06.png",
+          "cum_mm": -81
         },
         {
           "date": "2025-10",
-          "png": "data/lapse/cebu-mandaue/07.png"
+          "png": "data/lapse/cebu-mandaue/07.png",
+          "cum_mm": -101
         }
       ],
       "buildings_on_sinking_ground": 562,
@@ -144,35 +160,43 @@
       "lapse": [
         {
           "date": "2016-01",
-          "png": "data/lapse/iloilo/00.png"
+          "png": "data/lapse/iloilo/00.png",
+          "cum_mm": 0
         },
         {
           "date": "2017-07",
-          "png": "data/lapse/iloilo/01.png"
+          "png": "data/lapse/iloilo/01.png",
+          "cum_mm": -13
         },
         {
           "date": "2018-10",
-          "png": "data/lapse/iloilo/02.png"
+          "png": "data/lapse/iloilo/02.png",
+          "cum_mm": -36
         },
         {
           "date": "2020-04",
-          "png": "data/lapse/iloilo/03.png"
+          "png": "data/lapse/iloilo/03.png",
+          "cum_mm": -47
         },
         {
           "date": "2021-07",
-          "png": "data/lapse/iloilo/04.png"
+          "png": "data/lapse/iloilo/04.png",
+          "cum_mm": -79
         },
         {
           "date": "2023-01",
-          "png": "data/lapse/iloilo/05.png"
+          "png": "data/lapse/iloilo/05.png",
+          "cum_mm": -84
         },
         {
           "date": "2024-04",
-          "png": "data/lapse/iloilo/06.png"
+          "png": "data/lapse/iloilo/06.png",
+          "cum_mm": -88
         },
         {
           "date": "2025-10",
-          "png": "data/lapse/iloilo/07.png"
+          "png": "data/lapse/iloilo/07.png",
+          "cum_mm": -102
         }
       ],
       "buildings_on_sinking_ground": 409,

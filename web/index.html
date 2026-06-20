@@ -135,7 +135,7 @@ const CN = {
 };
 let LANG = "en";
 let MODE = "v", FRAME = 7, CITIES = [], playing = null;
-window.__diag = { ready:false, cities:0, layers:0 };
+window.__diag = { ready:false, cities:0, layers:0, mode:"v", frame:0, playing:false, overlay:{}, floods:0 };
 
 const NAMES = {
   "metro-manila":"Metro Manila / Bulacan", "cebu-mandaue":"Cebu / Mandaue",
@@ -183,29 +183,38 @@ function setOverlay(){
     if (!src) continue;
     const url = (MODE==="l" && c.lapse) ? c.lapse[FRAME].png : c.png;
     src.updateImage({ url });
+    window.__diag.overlay[c.id] = url;
   }
 }
-function stopPlay(){ if (playing){ clearInterval(playing); playing=null; document.getElementById("play").innerHTML="&#9654;"; } }
+function updateFrameLabel(){
+  const f = (CITIES[0] && CITIES[0].lapse) ? CITIES[0].lapse[FRAME] : null;
+  window.__diag.frame = FRAME;
+  if (f) document.getElementById("frame-date").textContent = `${f.date} · ${Math.abs(f.cum_mm)} mm`;
+}
+function stopPlay(){ if (playing){ clearInterval(playing); playing=null; window.__diag.playing=false; document.getElementById("play").innerHTML="&#9654;"; } }
 function setMode(m){
-  MODE = m;
+  MODE = m; window.__diag.mode = m;
   document.getElementById("mode-v").classList.toggle("on", m==="v");
   document.getElementById("mode-l").classList.toggle("on", m==="l");
   document.getElementById("lapse-ctl").style.display = m==="l" ? "block" : "none";
-  if (m==="l"){ FRAME = +document.getElementById("slider").value; document.getElementById("frame-date").textContent = CITIES[0].lapse[FRAME].date; }
-  else stopPlay();
+  // the exposure glow is velocity-derived; hide it while animating displacement
+  for (const c of CITIES) if (map.getLayer("e-"+c.id))
+    map.setLayoutProperty("e-"+c.id, "visibility", m==="l" ? "none" : "visible");
+  stopPlay();
+  if (m==="l"){ FRAME = 0; document.getElementById("slider").value = 0; updateFrameLabel(); }  // start at 2016
   setLegend(); setOverlay();
 }
 document.getElementById("mode-v").onclick = ()=>setMode("v");
 document.getElementById("mode-l").onclick = ()=>setMode("l");
-document.getElementById("slider").oninput = (e)=>{ FRAME=+e.target.value; document.getElementById("frame-date").textContent = CITIES[0].lapse[FRAME].date; setOverlay(); };
+document.getElementById("slider").oninput = (e)=>{ FRAME=+e.target.value; updateFrameLabel(); setOverlay(); };
 document.getElementById("play").onclick = ()=>{
   if (playing){ stopPlay(); return; }
+  window.__diag.playing = true;
   document.getElementById("play").innerHTML="&#10074;&#10074;";
   playing = setInterval(()=>{
     FRAME = (FRAME+1) % CITIES[0].lapse.length;
     document.getElementById("slider").value = FRAME;
-    document.getElementById("frame-date").textContent = CITIES[0].lapse[FRAME].date;
-    setOverlay();
+    updateFrameLabel(); setOverlay();
   }, 950);
 };
 
@@ -252,6 +261,8 @@ map.on("load", async ()=>{
   CITIES = data.cities;
   if (CITIES[0] && CITIES[0].lapse)
     document.getElementById("slider").max = CITIES[0].lapse.length - 1;
+  // preload sink-lapse frames so playback is smooth (no per-frame fetch flicker)
+  for (const c of CITIES) for (const f of (c.lapse || [])) { const im = new Image(); im.src = f.png; }
   applyLang();
   // velocity image overlays + markers
   for (const c of data.cities){
@@ -284,14 +295,19 @@ map.on("load", async ()=>{
     for (const ev of fl.events){
       map.addSource("f-"+ev.id, { type:"image", url:ev.png, coordinates:ev.coords });
       map.addLayer({ id:"f-"+ev.id, type:"raster", source:"f-"+ev.id,
-        layout:{ visibility:"none" }, paint:{ "raster-opacity":0.75 } });
+        layout:{ visibility:"none" }, paint:{ "raster-opacity":0.9, "raster-resampling":"nearest" } });
       const lab = document.createElement("label");
       lab.style.cssText = "display:flex;gap:6px;align-items:center;cursor:pointer;";
       const cb = document.createElement("input"); cb.type="checkbox";
-      cb.onchange = ()=> map.setLayoutProperty("f-"+ev.id, "visibility", cb.checked?"visible":"none");
+      cb.onchange = ()=>{
+        map.setLayoutProperty("f-"+ev.id, "visibility", cb.checked?"visible":"none");
+        if (cb.checked){ const c=ev.coords;  // fly to the flood so it's actually in view
+          map.fitBounds([[c[0][0],c[2][1]],[c[1][0],c[0][1]]], {padding:50, maxZoom:11, duration:800}); }
+      };
       lab.appendChild(cb);
       lab.appendChild(document.createTextNode(`${ev.name}${ev.km2?` · ${ev.km2} km²`:""}`));
       box.appendChild(lab);
+      window.__diag.floods++;
     }
     if (fl.events.length) document.getElementById("floods").style.display="block";
   } catch(e){ /* flood layers optional */ }
