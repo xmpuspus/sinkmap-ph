@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Behavioral e2e for the sinkmap.ph web map (115 checks) via agent-browser.
+# Behavioral e2e for the sinkmap.ph web map (119 checks) via agent-browser.
 # Drives the real map and asserts loading, the sink-lapse slider/play, the flood
 # overlays, exposure, place cards, the surprising-findings panel (acceleration /
 # tilt / compound-exposure layers + callouts), the story rail (preview/commit/walk/
@@ -118,6 +118,11 @@ chk seavsland_72 "document.querySelectorAll('#flist .fcard')[6].querySelector('.
 chk r4_dagupan_35 "document.querySelectorAll('#flist .fcard')[7].querySelector('.fstat').innerText.indexOf('35')>=0"
 chk r4_regime_10x "document.querySelectorAll('#flist .fcard')[8].querySelector('.fstat').innerText.indexOf('10')>=0"
 chk r4_deceleration "document.querySelectorAll('#flist .fcard')[9].querySelector('.fstat').innerText.toLowerCase().indexOf('slowed')>=0"
+# plain-English blurb is surfaced in the list (not hidden behind a click), and the
+# accel copy names the new colorblind-safe colors (orange/purple), not the old red/green
+chk blurb_surfaced "document.querySelectorAll('#flist .fcard')[0].querySelector('.fblurb').offsetHeight>0"
+chk accel_blurb_orange "document.querySelectorAll('#flist .fcard')[0].querySelector('.fblurb').innerText.toLowerCase().indexOf('orange')>=0"
+chk accel_blurb_no_redgreen "document.querySelectorAll('#flist .fcard')[0].querySelector('.fblurb').innerText.toLowerCase().indexOf('red is speeding')<0"
 # select / switch / toggle behavior
 chk accel_select "(function(){document.querySelectorAll('#flist .fcard')[0].click();return window.__diag.activeFinding})()" acceleration
 chk accel_layer_on "map.getLayoutProperty('fl-accel','visibility')" visible
@@ -148,6 +153,7 @@ for i in {1..30}; do [ "$(ev 'window.__diag&&window.__diag.ready')" = "true" ] &
 chk rail_open_init "window.__diag.railOpen"
 chk rail_index_0 "window.__diag.railIndex===0"
 chk rail_card_accel "document.querySelector('#rail .r-tag').innerText.toLowerCase().indexOf('acceleration')>=0"
+chk rail_blurb_present "document.querySelector('#rail .r-blurb').innerText.length>40"
 # stepping is preview-only until the user commits (calm: no surprise camera motion on load)
 chk rail_next_preview "(function(){document.getElementById('rail-next').click();return window.__diag.railIndex})()" 1
 chk rail_preview_no_layer "map.getLayoutProperty('fl-compound','visibility')" none
