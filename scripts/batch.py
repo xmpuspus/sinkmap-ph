@@ -111,6 +111,27 @@ def submit(aoi_ids, budget):
           f"resume with `scripts/batch.py status`, then download + MintPy.")
 
 
+def process(aoi_ids):
+    """Download finished HyP3 products, then run the MintPy -> vertical -> gate
+    chain (pipeline/insar/process.py) per AOI. Resumable: download skips what is
+    already local; process overwrites. Run in/with the MintPy env on PATH for the
+    process step (it shells the MintPy-env python itself)."""
+    import subprocess
+    mp = str(Path.home() / "anaconda3" / "envs" / "sinkmap-mintpy312" / "bin" / "python")
+    st = load_state()
+    for aid in aoi_ids:
+        print(f"=== {aid}: download ===", flush=True)
+        subprocess.run([".venv/bin/python", "-m", "pipeline.insar.download",
+                        "--aoi", aid, "--watch"], cwd=str(ROOT))
+        print(f"=== {aid}: MintPy + gate ===", flush=True)
+        rc = subprocess.run([mp, "pipeline/insar/process.py", aid], cwd=str(ROOT)).returncode
+        res = ROOT / "tmp" / "phase2" / f"{aid}-result.json"
+        st["aois"].setdefault(aid, {})["state"] = "processed" if rc == 0 else "process-failed"
+        if res.exists():
+            st["aois"][aid]["result"] = json.loads(res.read_text())
+        save_state(st)
+
+
 def status():
     from pipeline.insar._edl import hyp3_client
     st = load_state()
@@ -129,7 +150,7 @@ def status():
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("cmd", choices=["plan", "submit", "status", "recon"])
+    ap.add_argument("cmd", choices=["plan", "submit", "status", "recon", "process"])
     ap.add_argument("aois", nargs="*")
     ap.add_argument("--budget", type=int, default=4000, help="HyP3 credit budget")
     args = ap.parse_args()
@@ -140,6 +161,8 @@ def main():
         plan(args.aois, args.budget)
     elif args.cmd == "submit":
         submit(args.aois, args.budget)
+    elif args.cmd == "process":
+        process(args.aois)
     elif args.cmd == "status":
         status()
 
