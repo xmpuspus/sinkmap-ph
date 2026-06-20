@@ -51,7 +51,41 @@
   #foot a{ color:var(--ink); }
   .badge{ display:inline-block; font-size:11px; font-weight:600; padding:1px 7px; border-radius:20px; }
   .b-go{ background:#e7f3ec; color:#1a7f48; } .b-lim{ background:#f0eef0; color:#8a7f8a; }
-  @media(max-width:560px){ #head{max-width:none;} #card{top:auto; bottom:96px; right:12px; left:12px; width:auto;} #foot{display:none;} }
+  /* surprising-findings drawer */
+  .fbtn{ width:100%; margin-top:9px; border:1px solid var(--ink); background:var(--ink); color:#fff;
+    border-radius:7px; padding:7px 10px; cursor:pointer; font-size:12.5px; font-weight:600; text-align:left;
+    display:flex; align-items:center; gap:7px; }
+  .fbtn:hover{ opacity:.92; } .fbtn .arr{ margin-left:auto; }
+  #findings{ position:absolute; z-index:4; top:12px; left:12px; bottom:12px; width:344px;
+    max-width:calc(100% - 24px); display:none; flex-direction:column; padding:0; }
+  #findings.open{ display:flex; }
+  #fhead{ padding:12px 14px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:8px; }
+  #fhead h2{ margin:0; font-size:15px; flex:1; letter-spacing:-.2px; }
+  #fhead .flang button{ border:1px solid var(--line); background:#fff; border-radius:6px; padding:2px 7px;
+    cursor:pointer; color:var(--muted); font-size:11px; }
+  #fhead .flang button.on{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  #fclose{ cursor:pointer; color:var(--muted); font-size:20px; line-height:1; border:0; background:none; }
+  #flist{ overflow-y:auto; padding:8px; }
+  .fcard{ border:1px solid var(--line); border-radius:8px; padding:10px 11px; margin-bottom:8px; cursor:pointer; }
+  .fcard:hover{ background:#f5f8f9; }
+  .fcard.on{ border-color:var(--ink); background:#eef3f5; box-shadow:inset 0 0 0 1px var(--ink); }
+  .fcard .ftag{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); }
+  .fcard h3{ margin:3px 0 5px; font-size:13.5px; line-height:1.32; }
+  .fcard .fstat{ font-size:13px; font-weight:700; color:var(--ink); line-height:1.35; }
+  .fcard .fblurb{ font-size:12px; color:var(--muted); line-height:1.5; margin-top:6px; display:none; }
+  .fcard.on .fblurb{ display:block; }
+  .fcard .fsrc{ font-size:10.5px; color:var(--muted); margin-top:6px; font-style:italic; display:none; }
+  .fcard.on .fsrc{ display:block; }
+  .framp{ height:9px; border-radius:3px; margin:7px 0 2px; display:none; }
+  .fcard.on .framp{ display:block; }
+  .framp-x{ display:none; justify-content:space-between; color:var(--muted); font-size:10.5px; }
+  .fcard.on .framp-x{ display:flex; }
+  .callout{ display:flex; align-items:center; gap:5px; transform:translate(8px,-7px); white-space:nowrap; }
+  .callout .cdot{ width:11px; height:11px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.4); }
+  .callout .clab{ font-size:11px; font-weight:600; background:rgba(255,255,255,.9); color:var(--ink);
+    padding:1px 6px; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,.15); }
+  @media(max-width:560px){ #head{max-width:none;} #card{top:auto; bottom:96px; right:12px; left:12px; width:auto;} #foot{display:none;}
+    #findings{ width:auto; right:12px; top:auto; height:62%; } }
 </style>
 </head>
 <body>
@@ -66,6 +100,16 @@
     <b id="t-floods" style="font-size:12px; color:var(--muted);"></b>
     <div id="flood-toggles" style="margin-top:4px; display:flex; flex-direction:column; gap:3px;"></div>
   </div>
+  <button id="fopen" class="fbtn"><span id="t-fopen"></span><span class="arr">&rarr;</span></button>
+</div>
+
+<div id="findings" class="panel">
+  <div id="fhead">
+    <h2 id="t-ftitle"></h2>
+    <span class="flang"><button id="fen" class="on">EN</button><button id="ftl">TL</button></span>
+    <button id="fclose" title="close">&times;</button>
+  </div>
+  <div id="flist"></div>
 </div>
 
 <div id="legend" class="panel">
@@ -114,6 +158,8 @@ const CN = {
     legend_lapse: "Cumulative ground motion since 2016", sink_more: "more sinking", rise_more: "rising",
     floods: "Recent flood extents (Sentinel-1)",
     exposure: "Buildings on fast-sinking ground",
+    fopen: "Surprising findings", ftitle: "Surprising findings",
+    fhint: "Tap a finding to fly there and show it on the map.",
   },
   tl: {
     sub: "Gaano kabilis lumulubog ang lupa sa mga lungsod ng Pilipinas, sinukat mula sa Sentinel-1 satellite radar, 2016 hanggang 2025.",
@@ -131,11 +177,16 @@ const CN = {
     legend_lapse: "Naipong paggalaw ng lupa mula 2016", sink_more: "mas lumulubog", rise_more: "tumataas",
     floods: "Saklaw ng kamakailang baha (Sentinel-1)",
     exposure: "Mga gusali sa mabilis lumulubog na lupa",
+    fopen: "Mga nakagulat na natuklasan", ftitle: "Mga nakagulat na natuklasan",
+    fhint: "Pindutin ang natuklasan para lumipad doon at ipakita sa mapa.",
   }
 };
 let LANG = "en";
 let MODE = "v", FRAME = 7, CITIES = [], playing = null;
-window.__diag = { ready:false, cities:0, layers:0, mode:"v", frame:0, playing:false, overlay:{}, floods:0 };
+let FINDINGS = null, ACTIVE = null, CALLOUTS = [];
+window.__diag = { ready:false, cities:0, layers:0, mode:"v", frame:0, playing:false, overlay:{}, floods:0,
+  findings:0, findingLayers:0, activeFinding:null,
+  findingLayerVisible:{ accel:false, tilt:false, compound:false }, callouts:0 };
 
 const NAMES = {
   "metro-manila":"Metro Manila / Bulacan", "cebu-mandaue":"Cebu / Mandaue",
@@ -164,9 +215,14 @@ function applyLang(){
     document.getElementById(id).textContent = c[key];
   document.getElementById("mode-v").textContent = c.mode_v;
   document.getElementById("mode-l").textContent = c.mode_l;
+  document.getElementById("t-fopen").textContent = c.fopen;
+  document.getElementById("t-ftitle").textContent = c.ftitle;
   document.getElementById("en").classList.toggle("on", LANG==="en");
   document.getElementById("tl").classList.toggle("on", LANG==="tl");
+  document.getElementById("fen").classList.toggle("on", LANG==="en");
+  document.getElementById("ftl").classList.toggle("on", LANG==="tl");
   setLegend();
+  if (FINDINGS) renderFindings();
 }
 function setLegend(){
   const c = CN[LANG];
@@ -176,6 +232,64 @@ function setLegend(){
 }
 document.getElementById("en").onclick = ()=>{ LANG="en"; applyLang(); };
 document.getElementById("tl").onclick = ()=>{ LANG="tl"; applyLang(); };
+document.getElementById("fopen").onclick = ()=>document.getElementById("findings").classList.add("open");
+document.getElementById("fclose").onclick = ()=>document.getElementById("findings").classList.remove("open");
+document.getElementById("fen").onclick = ()=>{ LANG="en"; applyLang(); };
+document.getElementById("ftl").onclick = ()=>{ LANG="tl"; applyLang(); };
+
+const RAMP = { accel:"linear-gradient(90deg,#d73027,#fee08b,#1a9850)",
+               tilt:"linear-gradient(90deg,#f7f7f7,#7b1fa2)" };
+function renderFindings(){
+  const c = CN[LANG], list = document.getElementById("flist");
+  list.innerHTML = `<p style="font-size:11.5px;color:var(--muted);margin:2px 4px 9px;">${c.fhint}</p>`;
+  for (const f of FINDINGS.findings){
+    const ly = f.layer && FINDINGS.layers[f.layer];
+    let ramp = "";
+    if (ly && ly.legend){
+      const lg = ly.legend[LANG];
+      ramp = `<div class="framp" style="background:${RAMP[f.layer]||'#7a0177'}"></div>
+              <div class="framp-x"><span>${lg.left}</span><span>${lg.right}</span></div>`;
+    }
+    const card = document.createElement("div");
+    card.className = "fcard" + (ACTIVE===f.id ? " on" : "");
+    card.innerHTML = `<div class="ftag">${f.tag[LANG]}</div><h3>${f.title[LANG]}</h3>`
+      + `<div class="fstat">${f.stat[LANG]}</div>${ramp}`
+      + `<div class="fblurb">${f.blurb[LANG]}</div>`
+      + (f.source ? `<div class="fsrc">${f.source}</div>` : "");
+    card.onclick = ()=>selectFinding(f);
+    list.appendChild(card);
+  }
+}
+function clearFinding(){
+  for (const k of ["accel","tilt","compound"]) if (map.getLayer("fl-"+k)){
+    map.setLayoutProperty("fl-"+k, "visibility", "none");
+    window.__diag.findingLayerVisible[k] = false;
+  }
+  for (const m of CALLOUTS) m.remove();
+  CALLOUTS = []; window.__diag.callouts = 0;
+  ACTIVE = null; window.__diag.activeFinding = null;
+}
+function selectFinding(f){
+  const wasActive = ACTIVE === f.id;
+  clearFinding();
+  if (wasActive){ renderFindings(); return; }  // second tap closes it
+  ACTIVE = f.id; window.__diag.activeFinding = f.id;
+  if (MODE === "l") setMode("v");  // analysis layers are velocity-derived
+  if (f.layer && map.getLayer("fl-"+f.layer)){
+    map.setLayoutProperty("fl-"+f.layer, "visibility", "visible");
+    window.__diag.findingLayerVisible[f.layer] = true;
+  }
+  for (const co of (f.callouts || [])){
+    const el = document.createElement("div"); el.className = "callout";
+    const dot = document.createElement("div"); dot.className = "cdot"; dot.style.background = "#10212b";
+    const lab = document.createElement("div"); lab.className = "clab"; lab.textContent = co.label[LANG];
+    el.appendChild(dot); el.appendChild(lab);
+    CALLOUTS.push(new maplibregl.Marker({ element:el, anchor:"left" }).setLngLat(co.lngLat).addTo(map));
+  }
+  window.__diag.callouts = CALLOUTS.length;
+  if (f.fly) map.flyTo({ center:f.fly.center, zoom:f.fly.zoom, duration:900 });
+  renderFindings();
+}
 
 function setOverlay(){
   for (const c of CITIES){
@@ -201,7 +315,8 @@ function setMode(m){
   for (const c of CITIES) if (map.getLayer("e-"+c.id))
     map.setLayoutProperty("e-"+c.id, "visibility", m==="l" ? "none" : "visible");
   stopPlay();
-  if (m==="l"){ FRAME = 0; document.getElementById("slider").value = 0; updateFrameLabel(); }  // start at 2016
+  if (m==="l"){ FRAME = 0; document.getElementById("slider").value = 0; updateFrameLabel();  // start at 2016
+    clearFinding(); if (FINDINGS) renderFindings(); }  // analysis layers don't mix with the time-lapse
   setLegend(); setOverlay();
 }
 document.getElementById("mode-v").onclick = ()=>setMode("v");
@@ -311,6 +426,28 @@ map.on("load", async ()=>{
     }
     if (fl.events.length) document.getElementById("floods").style.display="block";
   } catch(e){ /* flood layers optional */ }
+  // surprising-findings story panel + its analysis layers
+  try {
+    FINDINGS = await (await fetch("data/findings.json")).json();
+    for (const [key, ly] of Object.entries(FINDINGS.layers)){
+      if (!ly.png) continue;  // image overlays (accel, tilt); compound handled below
+      const b = ly.bounds;
+      map.addSource("fl-"+key, { type:"image", url:ly.png,
+        coordinates:[[b.west,b.north],[b.east,b.north],[b.east,b.south],[b.west,b.south]] });
+      map.addLayer({ id:"fl-"+key, type:"raster", source:"fl-"+key,
+        layout:{ visibility:"none" }, paint:{ "raster-opacity":0.9 } });
+      window.__diag.findingLayers++;
+    }
+    const cmp = FINDINGS.layers.compound;
+    if (cmp && cmp.geojson){
+      map.addSource("fl-compound", { type:"geojson", data:cmp.geojson });
+      map.addLayer({ id:"fl-compound", type:"circle", source:"fl-compound", layout:{ visibility:"none" },
+        paint:{ "circle-radius":3.2, "circle-color":"#7a0177", "circle-opacity":0.75,
+                "circle-stroke-width":0.5, "circle-stroke-color":"#fff" } });
+    }
+    window.__diag.findings = FINDINGS.findings.length;
+    renderFindings();
+  } catch(e){ /* findings optional */ }
   window.__diag.ready = true;
 });
 </script>

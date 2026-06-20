@@ -61,6 +61,16 @@
 </ul>
 <div class="box disc"><b>Disclaimer.</b> This is observed spatial coincidence, not proof of cause. Subsidence is one of several flood drivers alongside rainfall, drainage capacity, tides, reclamation, and sea-level rise.</div>
 
+<h2>Surprising-findings layers (how the panel numbers are made)</h2>
+<p>The findings panel overlays patterns computed from the same time-series, with every number gated and baked into a data file, never hand-typed:</p>
+<ul>
+<li><b>Acceleration.</b> A per-pixel rate is fitted to the 2016-2020 half and the 2021-2025 half separately, each referenced to that half's own reliable-area median (so a reference or atmosphere drift that changes between halves cancels). The map shows the difference: red is sinking faster than before, green is slowing. The worst inland hotspot slowed (-96 to -79 mm/yr), yet more ground sped up (294 km2) than slowed (244 km2).</li>
+<li><b>Differential tilt.</b> The magnitude of the spatial gradient of the vertical velocity, smoothed about 400 m, in mm/yr per km. Uniform settlement is harmless; this gradient is what cracks roads and snaps pipes. Metro Manila reaches about 70 mm/yr per km at the steepest tilt.</li>
+<li><b>Double exposure.</b> Of the mapped buildings already on ground sinking faster than 15 mm/yr, the share that also sits inside a NOAH 25-year flood-prone zone (0.5 m or deeper): 46% in Metro Manila. Coincidence of two public layers, not causation.</li>
+<li><b>By flood-hazard class.</b> Fast-sinking ground concentrates in the Low and Medium flood tiers, not the deepest-flooding High tier, so flood depth and sinking rate are largely separate fields. High-hazard zones (river floodways) also have the lowest radar coverage.</li>
+<li><b>Most-exposed town.</b> Fast-sinking and fast-and-flood-prone area aggregated per OSM municipality boundary (by relation id, since Philippine place names repeat). San Miguel, Bulacan carries the most.</li>
+</ul>
+
 <h2>Error sources</h2>
 <p>Atmospheric (tropospheric water-vapor) phase delay; phase-unwrapping errors; DEM error; the choice of reference point; and the vertical-dominant assumption itself. Absolute rates are relative to an assumed-stable reference (no co-located GNSS benchmark). Coverage is limited to where the radar stays coherent: dense urban ground holds, vegetated and steep terrain decorrelates.</p>
 
