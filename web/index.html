@@ -16,19 +16,38 @@
   html,body{ margin:0; height:100%; font-family:-apple-system,Helvetica,Arial,sans-serif; color:var(--ink); background:var(--bg); }
   #map{ position:absolute; inset:0; }
   .panel{ position:absolute; z-index:2; background:#fff; border:1px solid var(--line); border-radius:10px; box-shadow:0 1px 8px rgba(16,33,43,.08); }
-  #head{ top:12px; left:12px; right:12px; max-width:430px; padding:14px 16px; }
+  button{ font-family:inherit; }
+  #head{ top:12px; left:12px; right:12px; max-width:380px; padding:14px 16px; }
   #head h1{ margin:0 0 2px; font-size:18px; letter-spacing:-.2px; }
   #head p{ margin:4px 0 0; font-size:13px; line-height:1.45; color:var(--muted); }
   .row{ display:flex; gap:8px; align-items:center; margin-top:8px; }
   .lang{ margin-left:auto; font-size:12px; }
   .lang button{ border:1px solid var(--line); background:#fff; border-radius:6px; padding:3px 8px; cursor:pointer; color:var(--muted); font-size:12px; }
   .lang button.on{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  /* find-your-city */
+  #findcity{ width:100%; margin-top:10px; border:1px solid var(--line); border-radius:7px; padding:8px 10px;
+    font-size:13px; color:var(--ink); background:#fff; cursor:pointer; -webkit-appearance:none; appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%235b6b75' stroke-width='1.6' fill='none'/></svg>");
+    background-repeat:no-repeat; background-position:right 10px center; }
+  #findcity:focus-visible{ outline:2px solid var(--ink); outline-offset:1px; }
+  /* legend */
   #legend{ bottom:16px; left:12px; padding:11px 13px; font-size:12px; max-width:230px; }
   #legend b{ font-size:12px; }
   .ramp{ height:11px; border-radius:3px; margin:7px 0 3px;
     background:linear-gradient(90deg,#b2182b,#ef8a62,#fddbc7,#f7f7f7,#d1e5f0,#67a9cf,#2166ac); }
   .ramp-x{ display:flex; justify-content:space-between; color:var(--muted); font-size:11px; }
-  #card{ display:none; top:12px; right:12px; width:300px; max-width:calc(100% - 24px); padding:0; overflow:hidden; }
+  /* mode toggle (top-center) */
+  #modebar{ top:12px; left:50%; transform:translateX(-50%); padding:7px 9px; }
+  #modebar .row{ margin-top:0; gap:6px; }
+  .mode{ border:1px solid var(--line); background:#fff; border-radius:6px; padding:6px 12px; cursor:pointer; font-size:12.5px; color:var(--muted); }
+  .mode.on{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  #lapse-ctl{ margin-top:8px; }
+  #lapse-ctl .row{ margin-top:0; }
+  #play{ border:1px solid var(--line); background:#fff; border-radius:6px; width:30px; height:30px; cursor:pointer; }
+  #slider{ flex:1; }
+  #frame-date{ font-size:12px; color:var(--muted); min-width:56px; text-align:right; }
+  /* place card */
+  #card{ display:none; top:64px; right:12px; width:300px; max-width:calc(100% - 24px); padding:0; overflow:hidden; }
   #card .c-h{ padding:13px 15px 10px; border-bottom:1px solid var(--line); }
   #card .c-h h2{ margin:0; font-size:16px; }
   #card .rate{ font-size:30px; font-weight:700; letter-spacing:-.5px; margin:8px 0 2px; }
@@ -37,26 +56,51 @@
   #card .kv{ display:flex; justify-content:space-between; gap:10px; padding:4px 0; border-bottom:1px dashed var(--line); }
   #card .kv span:last-child{ text-align:right; color:var(--muted); }
   #card .note{ margin-top:10px; font-size:12px; color:var(--muted); }
-  #card .close{ position:absolute; top:10px; right:12px; cursor:pointer; color:var(--muted); font-size:18px; line-height:1; }
+  #card .close{ position:absolute; top:8px; right:10px; cursor:pointer; color:var(--muted); font-size:20px; line-height:1; border:0; background:none; }
   .pin{ width:14px; height:14px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.35); cursor:pointer; }
   .lab{ font-size:11px; font-weight:600; background:rgba(255,255,255,.82); padding:1px 5px; border-radius:4px; transform:translate(10px,-9px); white-space:nowrap; }
-  #lapsep{ bottom:16px; left:50%; transform:translateX(-50%); padding:9px 13px; min-width:260px; }
-  .mode{ border:1px solid var(--line); background:#fff; border-radius:6px; padding:4px 10px; cursor:pointer; font-size:12px; color:var(--muted); }
-  .mode.on{ background:var(--ink); color:#fff; border-color:var(--ink); }
-  #lapse-ctl .row{ margin-top:8px; }
-  #play{ border:1px solid var(--line); background:#fff; border-radius:6px; width:30px; height:26px; cursor:pointer; }
-  #slider{ flex:1; }
-  #frame-date{ font-size:12px; color:var(--muted); min-width:56px; text-align:right; }
-  #foot{ bottom:16px; right:12px; max-width:260px; padding:10px 13px; font-size:11px; color:var(--muted); line-height:1.45; }
-  #foot a{ color:var(--ink); }
   .badge{ display:inline-block; font-size:11px; font-weight:600; padding:1px 7px; border-radius:20px; }
   .b-go{ background:#e7f3ec; color:#1a7f48; } .b-lim{ background:#f0eef0; color:#8a7f8a; }
-  /* surprising-findings drawer */
-  .fbtn{ width:100%; margin-top:9px; border:1px solid var(--ink); background:var(--ink); color:#fff;
+  /* ---- STORY RAIL (the first-touch insight sequence) ---- */
+  #rail{ left:50%; transform:translateX(-50%); bottom:16px; width:min(540px, calc(100% - 24px));
+    padding:0; overflow:hidden; }
+  #rail.min{ display:none; }
+  .r-top{ display:flex; align-items:center; gap:8px; padding:9px 13px 7px; border-bottom:1px solid var(--line); }
+  .r-kick{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); }
+  #r-count{ font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums; }
+  #r-dots{ display:flex; gap:4px; margin-left:auto; }
+  #r-dots i{ width:6px; height:6px; border-radius:50%; background:var(--line); display:block; }
+  #r-dots i.on{ background:var(--ink); }
+  #rail-min{ border:0; background:none; color:var(--muted); cursor:pointer; font-size:18px; line-height:1; padding:0 2px; }
+  .r-body{ display:flex; align-items:stretch; gap:8px; padding:10px 10px 6px; }
+  .r-nav{ flex:0 0 auto; width:38px; border:1px solid var(--line); background:#fff; border-radius:8px;
+    cursor:pointer; color:var(--ink); font-size:20px; line-height:1; }
+  .r-nav:hover{ background:#f5f8f9; } .r-nav:disabled{ opacity:.35; cursor:default; }
+  .r-card{ flex:1; text-align:left; border:1px solid var(--line); background:#fff; border-radius:8px;
+    padding:9px 11px; cursor:pointer; display:block; }
+  .r-card:hover{ background:#f7fafb; }
+  .r-card.on{ border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink); }
+  .r-tag{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); }
+  .r-title{ display:block; font-size:13.5px; font-weight:600; line-height:1.32; margin:3px 0 4px; }
+  .r-stat{ display:block; font-size:12.5px; font-weight:700; color:var(--ink); line-height:1.35; }
+  .r-ramp{ height:8px; border-radius:3px; margin:7px 0 1px; display:none; }
+  .r-card.has-layer .r-ramp{ display:block; }
+  .r-ramp-x{ display:none; justify-content:space-between; color:var(--muted); font-size:10px; }
+  .r-card.has-layer .r-ramp-x{ display:flex; }
+  .r-cta{ display:inline-flex; align-items:center; gap:5px; margin-top:7px; font-size:12px; font-weight:600; color:var(--rise); }
+  .r-card.on .r-cta{ color:#1a7f48; }
+  .r-foot{ padding:7px 13px 9px; border-top:1px solid var(--line); font-size:10.5px; color:var(--muted); line-height:1.4; }
+  .r-foot a{ color:var(--ink); }
+  /* collapsed-rail reopen tab */
+  #rail-open{ display:none; left:50%; transform:translateX(-50%); bottom:16px; padding:9px 15px; cursor:pointer;
+    font-size:12.5px; font-weight:600; color:#fff; background:var(--ink); border:1px solid var(--ink); align-items:center; gap:8px; }
+  #rail-open.show{ display:inline-flex; }
+  /* surprising-findings drawer (full list view, opened from head) */
+  .fbtn{ width:100%; margin-top:10px; border:1px solid var(--line); background:#fff; color:var(--ink);
     border-radius:7px; padding:7px 10px; cursor:pointer; font-size:12.5px; font-weight:600; text-align:left;
     display:flex; align-items:center; gap:7px; }
-  .fbtn:hover{ opacity:.92; } .fbtn .arr{ margin-left:auto; }
-  #findings{ position:absolute; z-index:4; top:12px; left:12px; bottom:12px; width:344px;
+  .fbtn:hover{ background:#f5f8f9; } .fbtn .arr{ margin-left:auto; color:var(--muted); }
+  #findings{ position:absolute; z-index:5; top:12px; left:12px; bottom:12px; width:344px;
     max-width:calc(100% - 24px); display:none; flex-direction:column; padding:0; }
   #findings.open{ display:flex; }
   #fhead{ padding:12px 14px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:8px; }
@@ -84,8 +128,27 @@
   .callout .cdot{ width:11px; height:11px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.4); }
   .callout .clab{ font-size:11px; font-weight:600; background:rgba(255,255,255,.9); color:var(--ink);
     padding:1px 6px; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,.15); }
-  @media(max-width:560px){ #head{max-width:none;} #card{top:auto; bottom:96px; right:12px; left:12px; width:auto;} #foot{display:none;}
-    #findings{ width:auto; right:12px; top:auto; height:62%; } }
+  /* floods block */
+  #floods{ margin-top:10px; font-size:12.5px; display:none; }
+  /* ---- mobile ---- */
+  @media(max-width:560px){
+    #head{ max-width:none; padding:11px 13px; }
+    #head p#t-sub{ font-size:12.5px; }
+    /* mode toggle + legend float just above the rail; JS sets their bottom to the rail height */
+    #modebar{ top:auto; bottom:16px; left:12px; transform:none; z-index:4; }
+    #legend{ top:auto; bottom:16px; left:auto; right:12px; max-width:148px; padding:8px 10px; z-index:4; }
+    body.cardopen #modebar, body.cardopen #legend{ display:none; }
+    #card{ top:auto; bottom:0; left:0; right:0; width:auto; border-radius:14px 14px 0 0; z-index:6; }
+    body.cardopen #rail{ display:none; }
+    /* the rail is the bottom sheet; keep it compact so controls clear it */
+    #rail{ left:0; right:0; bottom:0; transform:none; width:100%; border-radius:14px 14px 0 0; }
+    #rail .r-ramp, #rail .r-ramp-x{ display:none !important; }
+    #rail .r-title{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    #rail .r-foot{ font-size:10px; }
+    #rail-open{ left:auto; right:12px; bottom:12px; transform:none; }
+    #findings{ width:auto; right:12px; top:12px; bottom:auto; height:74%; }
+  }
+  @media (prefers-reduced-motion: reduce){ *{ scroll-behavior:auto !important; } }
 </style>
 </head>
 <body>
@@ -95,19 +158,30 @@
   <div class="row"><h1 id="t-title">sinkmap.ph</h1>
     <span class="lang"><button id="en" class="on">EN</button><button id="tl">TL</button></span></div>
   <p id="t-sub"></p>
-  <p id="t-hint" style="margin-top:6px;"></p>
-  <div id="floods" style="margin-top:9px; font-size:12.5px; display:none;">
+  <select id="findcity" aria-label="Find your city"><option value="" id="t-findcity"></option></select>
+  <div id="floods">
     <b id="t-floods" style="font-size:12px; color:var(--muted);"></b>
     <div id="flood-toggles" style="margin-top:4px; display:flex; flex-direction:column; gap:3px;"></div>
   </div>
   <button id="fopen" class="fbtn"><span id="t-fopen"></span><span class="arr">&rarr;</span></button>
 </div>
 
+<div id="modebar" class="panel">
+  <div class="row" style="gap:6px;">
+    <button id="mode-v" class="mode on"></button>
+    <button id="mode-l" class="mode"></button>
+  </div>
+  <div id="lapse-ctl" style="display:none;">
+    <div class="row"><button id="play" aria-label="play">&#9654;</button>
+      <input id="slider" type="range" min="0" max="7" value="7" aria-label="time" /><span id="frame-date"></span></div>
+  </div>
+</div>
+
 <div id="findings" class="panel">
   <div id="fhead">
     <h2 id="t-ftitle"></h2>
     <span class="flang"><button id="fen" class="on">EN</button><button id="ftl">TL</button></span>
-    <button id="fclose" title="close">&times;</button>
+    <button id="fclose" title="close" aria-label="close">&times;</button>
   </div>
   <div id="flist"></div>
 </div>
@@ -118,36 +192,43 @@
   <div class="ramp-x"><span id="t-sink"></span><span>0</span><span id="t-rise"></span></div>
 </div>
 
-<div id="lapsep" class="panel">
-  <div class="row" style="gap:6px;">
-    <button id="mode-v" class="mode on"></button>
-    <button id="mode-l" class="mode"></button>
-  </div>
-  <div id="lapse-ctl" style="display:none;">
-    <div class="row"><button id="play">&#9654;</button>
-      <input id="slider" type="range" min="0" max="7" value="7" /><span id="frame-date"></span></div>
-  </div>
-</div>
-
 <div id="card" class="panel">
-  <span class="close" onclick="document.getElementById('card').style.display='none'">×</span>
+  <button class="close" id="cd-close" aria-label="close">×</button>
   <div class="c-h"><h2 id="cd-name"></h2><div class="rate" id="cd-rate"></div></div>
   <div class="body" id="cd-body"></div>
 </div>
 
-<div id="foot" class="panel">
-  <span id="t-disc"></span>
-  <div style="margin-top:6px;"><a href="methodology.html" id="t-method">Methodology &amp; data</a></div>
+<!-- Story rail: the insights lead here, walked one at a time -->
+<div id="rail" class="panel">
+  <div class="r-top">
+    <span class="r-kick" id="t-rkick"></span>
+    <span id="r-count"></span>
+    <div id="r-dots"></div>
+    <button id="rail-min" aria-label="hide insights" title="hide">&minus;</button>
+  </div>
+  <div class="r-body">
+    <button id="rail-prev" class="r-nav" aria-label="previous finding">&lsaquo;</button>
+    <button id="rail-card" class="r-card">
+      <span class="r-tag"></span>
+      <span class="r-title"></span>
+      <span class="r-stat"></span>
+      <span class="r-ramp"></span>
+      <span class="r-ramp-x"><span class="rl"></span><span class="rr"></span></span>
+      <span class="r-cta"></span>
+    </button>
+    <button id="rail-next" class="r-nav" aria-label="next finding">&rsaquo;</button>
+  </div>
+  <div class="r-foot"><span id="t-disc"></span> <a href="methodology.html" id="t-method"></a></div>
 </div>
+<button id="rail-open" class="panel"><span id="t-ropen"></span> &uarr;</button>
 
 <script>
 const CN = {
   en: {
     sub: "How fast the ground is sinking under Philippine cities, measured from Sentinel-1 satellite radar, 2016 to 2025.",
-    hint: "Red is sinking, blue is rising. Tap a marker for the measured rate.",
     legend: "Vertical ground velocity",
     sink: "sinking 60+ mm/yr", rise: "rising 20",
-    disc: "Measurement, not a forecast. Subsidence is one of several flood drivers (rainfall, drainage, tides, reclamation, sea level); any flood overlap is spatial coincidence, not proof of cause. All from public satellite data.",
+    disc: "Measurement, not a forecast. Subsidence is one of several flood drivers (rainfall, drainage, tides, reclamation, sea level); any flood overlap is spatial coincidence, not proof of cause. Public satellite data.",
     method: "Methodology & data",
     rate_lead: "Ground sinking up to", peryr: "mm/yr",
     anchor: "Published rate", reproduces: "Reproduces the published",
@@ -158,15 +239,17 @@ const CN = {
     legend_lapse: "Cumulative ground motion since 2016", sink_more: "more sinking", rise_more: "rising",
     floods: "Recent flood extents (Sentinel-1)",
     exposure: "Buildings on fast-sinking ground",
-    fopen: "Key findings", ftitle: "Key findings",
+    fopen: "See all 10 findings", ftitle: "Key findings",
     fhint: "Tap a finding to fly there and show it on the map.",
+    findcity: "Find your city",
+    rkick: "Key findings", rshow: "Show on map", rshowing: "Showing on map",
+    ropen: "Key findings", rfly: "Tap to fly there",
   },
   tl: {
     sub: "Gaano kabilis lumulubog ang lupa sa mga lungsod ng Pilipinas, sinukat mula sa Sentinel-1 satellite radar, 2016 hanggang 2025.",
-    hint: "Pula ay lumulubog, asul ay tumataas. Pindutin ang marker para sa sinukat na bilis.",
     legend: "Bilis ng paggalaw ng lupa (patayo)",
     sink: "lumulubog 60+ mm/taon", rise: "tumataas 20",
-    disc: "Sukat, hindi hula. Ang paglubog ay isa lamang sa mga sanhi ng baha (ulan, drainage, taog, reclamation, taas ng dagat); ang anumang pagsabay sa baha ay pagkakataon sa espasyo, hindi patunay ng sanhi. Lahat mula sa pampublikong datos ng satellite.",
+    disc: "Sukat, hindi hula. Ang paglubog ay isa lamang sa mga sanhi ng baha (ulan, drainage, taog, reclamation, taas ng dagat); ang anumang pagsabay sa baha ay pagkakataon, hindi patunay ng sanhi. Pampublikong datos ng satellite.",
     method: "Metodolohiya at datos",
     rate_lead: "Lupa lumulubog hanggang", peryr: "mm/taon",
     anchor: "Nailathalang bilis", reproduces: "Tumutugma sa nailathalang",
@@ -177,16 +260,21 @@ const CN = {
     legend_lapse: "Naipong paggalaw ng lupa mula 2016", sink_more: "mas lumulubog", rise_more: "tumataas",
     floods: "Saklaw ng kamakailang baha (Sentinel-1)",
     exposure: "Mga gusali sa mabilis lumulubog na lupa",
-    fopen: "Mga pangunahing natuklasan", ftitle: "Mga pangunahing natuklasan",
+    fopen: "Tingnan lahat ng 10", ftitle: "Mga pangunahing natuklasan",
     fhint: "Pindutin ang natuklasan para lumipad doon at ipakita sa mapa.",
+    findcity: "Hanapin ang lungsod mo",
+    rkick: "Mga natuklasan", rshow: "Ipakita sa mapa", rshowing: "Ipinapakita sa mapa",
+    ropen: "Mga natuklasan", rfly: "Pindutin para lumipad",
   }
 };
 let LANG = "en";
 let MODE = "v", FRAME = 7, CITIES = [], playing = null;
 let FINDINGS = null, ACTIVE = null, CALLOUTS = [];
+let RAIL_I = 0;
 window.__diag = { ready:false, cities:0, layers:0, mode:"v", frame:0, playing:false, overlay:{}, floods:0,
   findings:0, findingLayers:0, activeFinding:null,
-  findingLayerVisible:{ accel:false, tilt:false, compound:false }, callouts:0 };
+  findingLayerVisible:{ accel:false, tilt:false, compound:false }, callouts:0,
+  railOpen:true, railIndex:0 };
 
 const NAMES = {
   "metro-manila":"Metro Manila / Bulacan", "cebu-mandaue":"Cebu / Mandaue",
@@ -194,6 +282,7 @@ const NAMES = {
   "dagupan":"Dagupan / Pangasinan", "bacolod":"Bacolod / Negros", "tacloban":"Tacloban / Leyte",
   "cavite-coast":"Cavite coast (Manila Bay)", "cagayan-de-oro":"Cagayan de Oro",
 };
+const LIMPOS = { legazpi:[123.745,13.14], davao:[125.5,7.07], "cagayan-de-oro":[124.655,8.495] };
 
 const map = new maplibregl.Map({
   container: "map",
@@ -205,7 +294,7 @@ const map = new maplibregl.Map({
       tileSize:256, attribution:"© OpenStreetMap, © CARTO" } },
     layers: [{ id:"carto", type:"raster", source:"carto" }]
   },
-  center: [121.4, 13.6], zoom: 5.1, attributionControl: true,
+  center: [121.6, 13.2], zoom: 5.4, attributionControl: true,
 });
 map.addControl(new maplibregl.NavigationControl({showCompass:false}), "bottom-right");
 window.map = map;  // exposed for diagnostics / e2e
@@ -213,18 +302,17 @@ window.map = map;  // exposed for diagnostics / e2e
 function applyLang(){
   const c = CN[LANG];
   document.documentElement.lang = LANG;
-  for (const [id,key] of Object.entries({"t-sub":"sub","t-hint":"hint","t-disc":"disc","t-method":"method","t-floods":"floods"}))
+  for (const [id,key] of Object.entries({"t-sub":"sub","t-disc":"disc","t-method":"method","t-floods":"floods",
+      "t-fopen":"fopen","t-ftitle":"ftitle","t-findcity":"findcity","t-rkick":"rkick","t-ropen":"ropen"}))
     document.getElementById(id).textContent = c[key];
   document.getElementById("mode-v").textContent = c.mode_v;
   document.getElementById("mode-l").textContent = c.mode_l;
-  document.getElementById("t-fopen").textContent = c.fopen;
-  document.getElementById("t-ftitle").textContent = c.ftitle;
   document.getElementById("en").classList.toggle("on", LANG==="en");
   document.getElementById("tl").classList.toggle("on", LANG==="tl");
   document.getElementById("fen").classList.toggle("on", LANG==="en");
   document.getElementById("ftl").classList.toggle("on", LANG==="tl");
   setLegend();
-  if (FINDINGS) renderFindings();
+  if (FINDINGS){ renderFindings(); renderRail(); }
 }
 function setLegend(){
   const c = CN[LANG];
@@ -239,7 +327,9 @@ document.getElementById("fclose").onclick = ()=>document.getElementById("finding
 document.getElementById("fen").onclick = ()=>{ LANG="en"; applyLang(); };
 document.getElementById("ftl").onclick = ()=>{ LANG="tl"; applyLang(); };
 
-const RAMP = { accel:"linear-gradient(90deg,#d73027,#fee08b,#1a9850)",
+// orange = speeding up, purple = slowing (PuOr, colorblind-safe); tilt single-hue purple
+const RAMP = { accel:"linear-gradient(90deg,#7f3b08,#ed9b39,#f7f6f5,#998fbf,#2d004b)",
+               "accel-dagupan":"linear-gradient(90deg,#7f3b08,#ed9b39,#f7f6f5,#998fbf,#2d004b)",
                tilt:"linear-gradient(90deg,#f7f7f7,#7b1fa2)" };
 function renderFindings(){
   const c = CN[LANG], list = document.getElementById("flist");
@@ -262,6 +352,61 @@ function renderFindings(){
     list.appendChild(card);
   }
 }
+
+// ---- story rail ----
+function renderRail(){
+  if (!FINDINGS) return;
+  const c = CN[LANG], n = FINDINGS.findings.length, f = FINDINGS.findings[RAIL_I];
+  const isOn = ACTIVE === f.id;
+  document.getElementById("r-count").textContent = `${RAIL_I+1} / ${n}`;
+  const dots = document.getElementById("r-dots");
+  dots.innerHTML = "";
+  for (let i=0;i<n;i++){ const d=document.createElement("i"); if (i===RAIL_I) d.className="on"; dots.appendChild(d); }
+  const card = document.getElementById("rail-card");
+  card.classList.toggle("on", isOn);
+  const ly = f.layer && FINDINGS.layers[f.layer];
+  card.classList.toggle("has-layer", !!(ly && ly.legend));
+  card.querySelector(".r-tag").textContent = f.tag[LANG];
+  card.querySelector(".r-title").textContent = f.title[LANG];
+  card.querySelector(".r-stat").textContent = f.stat[LANG];
+  const ramp = card.querySelector(".r-ramp"), rx = card.querySelector(".r-ramp-x");
+  if (ly && ly.legend){ ramp.style.background = RAMP[f.layer]||"#7a0177";
+    rx.querySelector(".rl").textContent = ly.legend[LANG].left; rx.querySelector(".rr").textContent = ly.legend[LANG].right; }
+  card.querySelector(".r-cta").textContent = isOn ? ("✓ " + c.rshowing) : (c.rshow + " →");
+  document.getElementById("rail-prev").disabled = RAIL_I===0;
+  document.getElementById("rail-next").disabled = RAIL_I===n-1;
+  window.__diag.railIndex = RAIL_I;
+  layoutMobile();
+}
+// on phones the mode toggle + legend dock just above the rail sheet (rail height varies)
+function layoutMobile(){
+  const mb=document.getElementById("modebar"), lg=document.getElementById("legend"), rail=document.getElementById("rail");
+  const mob = window.innerWidth <= 560;
+  if (mob && rail && !rail.classList.contains("min") && !document.body.classList.contains("cardopen")){
+    const h = Math.round(rail.getBoundingClientRect().height);
+    mb.style.bottom = (h+10)+"px"; lg.style.bottom = (h+10)+"px";
+  } else { mb.style.bottom = ""; lg.style.bottom = ""; }
+}
+window.addEventListener("resize", layoutMobile);
+function railStep(d){
+  const n = FINDINGS.findings.length;
+  RAIL_I = Math.max(0, Math.min(n-1, RAIL_I + d));
+  renderRail();
+  if (ACTIVE !== null) selectFinding(FINDINGS.findings[RAIL_I]);  // walk the map only once a tour is underway
+}
+function railShow(){ selectFinding(FINDINGS.findings[RAIL_I]); }
+function setRailOpen(open){
+  document.getElementById("rail").classList.toggle("min", !open);
+  document.getElementById("rail-open").classList.toggle("show", !open);
+  window.__diag.railOpen = open;
+  layoutMobile();
+}
+document.getElementById("rail-prev").onclick = ()=>railStep(-1);
+document.getElementById("rail-next").onclick = ()=>railStep(1);
+document.getElementById("rail-card").onclick = railShow;
+document.getElementById("rail-min").onclick = ()=>setRailOpen(false);
+document.getElementById("rail-open").onclick = ()=>setRailOpen(true);
+
 function clearFinding(){
   for (const k of Object.keys((FINDINGS && FINDINGS.layers) || {})) if (map.getLayer("fl-"+k)){
     map.setLayoutProperty("fl-"+k, "visibility", "none");
@@ -274,7 +419,8 @@ function clearFinding(){
 function selectFinding(f){
   const wasActive = ACTIVE === f.id;
   clearFinding();
-  if (wasActive){ renderFindings(); return; }  // second tap closes it
+  RAIL_I = FINDINGS.findings.findIndex(x=>x.id===f.id);
+  if (wasActive){ renderFindings(); renderRail(); return; }  // second tap closes it
   ACTIVE = f.id; window.__diag.activeFinding = f.id;
   if (MODE === "l") setMode("v");  // analysis layers are velocity-derived
   if (f.layer && map.getLayer("fl-"+f.layer)){
@@ -290,7 +436,7 @@ function selectFinding(f){
   }
   window.__diag.callouts = CALLOUTS.length;
   if (f.fly) map.flyTo({ center:f.fly.center, zoom:f.fly.zoom, duration:900 });
-  renderFindings();
+  renderFindings(); renderRail();
 }
 
 function setOverlay(){
@@ -318,7 +464,7 @@ function setMode(m){
     map.setLayoutProperty("e-"+c.id, "visibility", m==="l" ? "none" : "visible");
   stopPlay();
   if (m==="l"){ FRAME = 0; document.getElementById("slider").value = 0; updateFrameLabel();  // start at 2016
-    clearFinding(); if (FINDINGS) renderFindings(); }  // analysis layers don't mix with the time-lapse
+    clearFinding(); if (FINDINGS){ renderFindings(); renderRail(); } }  // analysis layers don't mix with the time-lapse
   setLegend(); setOverlay();
 }
 document.getElementById("mode-v").onclick = ()=>setMode("v");
@@ -363,16 +509,36 @@ function showCity(c){
   if (c.peak_mm_yr && c.peak_mm_yr > c.rate_mm_yr*1.5)
     h += `<div class="note">Localized hotspot up to ${c.peak_mm_yr} ${t.peryr} (likely coastal reclamation).</div>`;
   document.getElementById("cd-body").innerHTML = h;
-  card.style.display="block";
+  card.style.display="block"; document.body.classList.add("cardopen"); layoutMobile();
 }
 
-function showLimited(x, lngLat){
+function showLimited(x){
   const t = CN[LANG], card=document.getElementById("card");
   document.getElementById("cd-name").textContent = NAMES[x.id]||x.id;
   document.getElementById("cd-rate").innerHTML = `<small>${t.limited}</small>`;
   document.getElementById("cd-body").innerHTML =
     `<span class="badge b-lim">${t.limited}</span><div class="note">${t.limited_body}</div>`;
-  card.style.display="block";
+  card.style.display="block"; document.body.classList.add("cardopen"); layoutMobile();
+}
+function closeCard(){ document.getElementById("card").style.display="none"; document.body.classList.remove("cardopen"); layoutMobile(); }
+document.getElementById("cd-close").onclick = closeCard;
+
+// find-your-city: jump to a measured city or a coherence-limited marker
+function buildFindCity(data){
+  const sel = document.getElementById("findcity");
+  const og = document.createElement("optgroup"); og.label = "Measured";
+  for (const c of data.cities){ const o=document.createElement("option"); o.value="c:"+c.id; o.textContent=NAMES[c.id]||c.id; og.appendChild(o); }
+  sel.appendChild(og);
+  const ol = document.createElement("optgroup"); ol.label = "Coherence-limited";
+  for (const x of (data.coherence_limited||[])){ if(!LIMPOS[x.id])continue; const o=document.createElement("option"); o.value="l:"+x.id; o.textContent=NAMES[x.id]||x.id; ol.appendChild(o); }
+  sel.appendChild(ol);
+  sel.onchange = ()=>{
+    const v = sel.value; if (!v) return;
+    const [kind,id] = [v.slice(0,1), v.slice(2)];
+    if (kind==="c"){ const c = data.cities.find(z=>z.id===id); if (c){ showCity(c); map.flyTo({center:c.center, zoom:11}); } }
+    else { const x = (data.coherence_limited||[]).find(z=>z.id===id); if (x){ showLimited(x); map.flyTo({center:LIMPOS[id], zoom:9}); } }
+    sel.value = "";
+  };
 }
 
 map.on("load", async ()=>{
@@ -382,6 +548,7 @@ map.on("load", async ()=>{
     document.getElementById("slider").max = CITIES[0].lapse.length - 1;
   // preload sink-lapse frames so playback is smooth (no per-frame fetch flicker)
   for (const c of CITIES) for (const f of (c.lapse || [])) { const im = new Image(); im.src = f.png; }
+  buildFindCity(data);
   applyLang();
   // velocity image overlays + markers
   for (const c of data.cities){
@@ -402,11 +569,17 @@ map.on("load", async ()=>{
     window.__diag.cities++;
   }
   // coherence-limited markers (honest: show where the method has limits)
-  const LIMPOS = { legazpi:[123.745,13.14], davao:[125.5,7.07], "cagayan-de-oro":[124.655,8.495] };
   for (const x of (data.coherence_limited||[])){
     if (!LIMPOS[x.id]) continue;
     marker(LIMPOS[x.id], "#b9b2bd", NAMES[x.id]||x.id, ()=>{ showLimited(x); map.flyTo({center:LIMPOS[x.id], zoom:9}); });
   }
+  // frame the measured cities so the map opens on the data, not the whole region
+  const pins = [...CITIES.map(c=>c.center), ...Object.values(LIMPOS)];
+  const lons = pins.map(p=>p[0]), lats = pins.map(p=>p[1]);
+  const bb = [[Math.min(...lons),Math.min(...lats)],[Math.max(...lons),Math.max(...lats)]];
+  const mob = window.innerWidth <= 560;
+  map.fitBounds(bb, { padding: mob ? {top:130,bottom:200,left:30,right:30} : {top:90,bottom:150,left:370,right:60},
+    duration:0, maxZoom:7.5 });
   // recent flood-extent overlays (toggleable)
   try {
     const fl = await (await fetch("data/flood-layers.json")).json();
@@ -450,7 +623,7 @@ map.on("load", async ()=>{
                 "circle-stroke-width":0.5, "circle-stroke-color":"#fff" } });
     }
     window.__diag.findings = FINDINGS.findings.length;
-    renderFindings();
+    renderFindings(); renderRail();
   } catch(e){ /* findings optional */ }
   window.__diag.ready = true;
 });
