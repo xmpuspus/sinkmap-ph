@@ -99,17 +99,16 @@ def main():
     anchor = reg.get(aoi).published_rate_mm_yr_max
 
     clipped = ROOT / "data" / "insar" / aoi / "clipped"
+    if not (clipped.exists() and any(clipped.iterdir())):
+        # Stream-fetch each ~200 MB product, keep only the 5 AOI-clipped bands,
+        # delete the raw. Peak disk < 1 GB, ~40 MB kept; no 16 GB/city hoard.
+        from pipeline.insar.lean_fetch import fetch_clip
+        print(f"[{aoi}] lean fetch + clip (no raw hoarding) ...", flush=True)
+        fetch_clip(aoi)
     hyp3 = ROOT / "data" / "insar" / aoi / "hyp3_products"
-    if not clipped.exists():
-        print(f"[{aoi}] clipping products to AOI grid ...", flush=True)
-        velocity.clip_products(aoi)
-    # clip keeps only the 5 needed bands at AOI scale (~70 MB); the raw full-frame
-    # GAMMA products (~16 GB) are dead weight once clipped/ exists. Reclaim them so
-    # the project never hoards 100s of GB of re-downloadable raw inputs.
-    if clipped.exists() and any(clipped.iterdir()) and hyp3.exists():
+    if hyp3.exists():  # remove any stale full-product dir from an older run
         import shutil
         shutil.rmtree(hyp3)
-        print(f"[{aoi}] removed raw hyp3_products (clipped/ retained, ~{sum(f.stat().st_size for f in clipped.rglob('*'))//(1024*1024)} MB)", flush=True)
 
     velocity.write_cfg(aoi, clipped=True)
     print(f"[{aoi}] pass 1: load + auto-ref ...", flush=True)

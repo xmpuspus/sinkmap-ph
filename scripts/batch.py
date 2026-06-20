@@ -112,18 +112,15 @@ def submit(aoi_ids, budget):
 
 
 def process(aoi_ids):
-    """Download finished HyP3 products, then run the MintPy -> vertical -> gate
-    chain (pipeline/insar/process.py) per AOI. Resumable: download skips what is
-    already local; process overwrites. Run in/with the MintPy env on PATH for the
-    process step (it shells the MintPy-env python itself)."""
+    """Run the lean fetch -> MintPy -> vertical -> gate chain per AOI
+    (pipeline/insar/process.py, which stream-fetches + clips each product and
+    never hoards the raw full-frame bundles). Resumable: already-clipped products
+    are skipped. Runs the MintPy-env python directly."""
     import subprocess
     mp = str(Path.home() / "anaconda3" / "envs" / "sinkmap-mintpy312" / "bin" / "python")
     st = load_state()
     for aid in aoi_ids:
-        print(f"=== {aid}: download ===", flush=True)
-        subprocess.run([".venv/bin/python", "-m", "pipeline.insar.download",
-                        "--aoi", aid, "--watch"], cwd=str(ROOT))
-        print(f"=== {aid}: MintPy + gate ===", flush=True)
+        print(f"=== {aid}: lean fetch + MintPy + gate ===", flush=True)
         rc = subprocess.run([mp, "pipeline/insar/process.py", aid], cwd=str(ROOT)).returncode
         res = ROOT / "tmp" / "phase2" / f"{aid}-result.json"
         st["aois"].setdefault(aid, {})["state"] = "processed" if rc == 0 else "process-failed"
