@@ -61,11 +61,56 @@ Resume, once the queue finishes:
    Davao 37 px and Legazpi 0 px NO-GO). Ascending+descending agreement is the
    stronger gate and is a v2 add.
 
+## Results so far (GAMMA, lean pipeline)
+
+The five GAMMA jobs cleared HyP3 in ~7 hours (not the 1-7 days budgeted). Processed
+through the lean fetch (peak disk < 1 GB; data/insar held ~1.5 GB the whole way):
+
+| City | robust mm/yr (median datum) | reliable px | verdict | note |
+|---|---|---|---|---|
+| Dagupan / Pangasinan | 19.5 (peak 24.6) | 11,541 | GO (coverage) | fast delta subsidence; matches the city's reputation |
+| Bacolod / Negros | 4.2 | 13,220 | GO (coverage) | slow, good coverage |
+| Tacloban / Leyte | 3.1 | 3,666 | MARGINAL | borderline coverage; the gate flagged it, not forced GO |
+| Cagayan de Oro | - | - | incomplete | SSL/DNS dropout fetched 11/77 products; re-run |
+| Cavite coast | - | - | FAIL-INVERT | resume-guard bug fetched 1 product; fixed, re-run |
+
+"GO" here is the anchor-free gate (good coverage / internally consistent), not a
+literature match -- none of these five has a published anchor.
+
+## The datum bug (found and fixed this round)
+
+Dagupan first came back at **-2.8 mm/yr** -- apparent relative uplift for a known
+subsidence delta. Cause: `adaptive_vertical` reported the rate relative to the
+MintPy reference pixel, and on a flat delta there is no stable high ground, so
+auto-reference landed on subsiding ground -- making the reference itself the
+fastest-sinking point and the whole field read as uplift. Fixed by reporting on
+the **area-median datum** (reference-invariant, the Metro Manila convention,
+common-mode removed); the ref-relative rate is kept as a diagnostic (a large gap
+flags a bad auto-reference). On the median datum Dagupan is **19.5 mm/yr**. This
+matters for scale-out: many GO-now targets are flat deltas, so the reference-
+relative rate would have mis-reported them as non-sinking. (`pipeline/insar/process.py`)
+
+## Burst-InSAR validation (in progress, network-blocked)
+
+Submitted hotspot-burst stacks for the five known-outcome cities to compare burst
+vs GAMMA before scaling. Burst pricing confirmed ~1 credit/pair (10x cheaper than
+GAMMA). Four fit the 320-credit remainder (Cebu, Metro Manila, Iloilo, Davao);
+Legazpi (2nd negative) waits for the credit reset. All four stacks finished on
+HyP3, but the comparison processing is blocked on a transient DNS/SSL dropout to
+the HyP3 API; re-run when connectivity returns (lean_fetch is resumable).
+
 ## Credits and what is next
 
-~3,840 of 4,160 credits used on these five. The free allotment resets monthly
-(8,000), so the next batch (General Santos, Naga, the Mega Manila sprawl cities,
-the rest of the GO-now list) goes next cycle. The ~100 PS-needed / terrain-hard
-cities (docs/findings/feasibility.md) still need the PS-InSAR upgrade (Phase B);
-this harness is what they plug into. The credit-free path to remove the ceiling
-entirely is ARIA-S1-GUNW ingestion (needs ARIA-tools installed; not yet wired).
+~3,840 of 4,160 GAMMA credits used on the five; burst validation spent the
+remaining ~318 (2 left). The free allotment resets monthly (8,000). Once burst is
+validated against GAMMA, the next batch (the rest of the GO-now list) goes via
+burst at 1/10th the credits and disk. The ~100 PS-needed / terrain-hard cities
+(docs/findings/feasibility.md) still need the PS-InSAR upgrade (Phase B); this
+harness is what they plug into. ARIA-S1-GUNW ingestion (credit-free) needs
+ARIA-tools installed; not yet wired.
+
+## Network-blocked, to resume when connectivity returns
+
+- Push the local datum-fix commit to origin.
+- Re-run Cagayan de Oro + Cavite coast GAMMA (incomplete fetches; resumable).
+- Re-run the burst validation comparison (Cebu / Metro Manila / Iloilo / Davao).
