@@ -40,7 +40,14 @@ def sb(cfg, run_dir, *extra):
 def adaptive_vertical(run_dir, out, min_px=120, max_plausible=150.0):
     """Masked pseudo-vertical at the highest temporal-coherence threshold that
     gives >= min_px reliable pixels whose velocities are physically plausible
-    (|v| <= max_plausible mm/yr; rejects decorrelation blow-ups)."""
+    (|v| <= max_plausible mm/yr; rejects decorrelation blow-ups).
+
+    Rate is reported on the MEDIAN datum (field minus the reliable-area median),
+    not relative to the MintPy reference pixel. Flat delta cities (e.g. Dagupan)
+    have no stable high ground, so auto-reference can land on subsiding ground and
+    make the whole field read as relative uplift; the median datum is reference-
+    invariant and removes that common-mode (the Metro Manila convention). The
+    reference-relative robust rate is kept as a diagnostic."""
     import h5py
     import numpy as np
     from osgeo import gdal, osr
@@ -57,12 +64,15 @@ def adaptive_vertical(run_dir, out, min_px=120, max_plausible=150.0):
     chosen = None
     for thr in [0.7, 0.65, 0.6, 0.55, 0.5]:
         m = (tc >= thr) & np.isfinite(vert)
-        if int(m.sum()) >= min_px and np.nanmax(np.abs(vert[m])) <= max_plausible:
-            chosen = (m, thr); break
+        if int(m.sum()) >= min_px:
+            vm = vert[m] - np.median(vert[m])  # plausibility on the median datum
+            if np.nanmax(np.abs(vm)) <= max_plausible:
+                chosen = (m, thr); break
     if chosen is None:
         m = (tc >= 0.5) & np.isfinite(vert); chosen = (m, 0.5)
     m, thr = chosen
-    v = np.where(m, vert, np.nan)
+    robust_ref_relative = float(-np.nanpercentile(np.where(m, vert, np.nan), 1))
+    v = np.where(m, vert - np.nanmedian(vert[m]), np.nan)  # median datum (reference-invariant)
     np.save(str(out) + ".npy", v)
     xf, yf, xs, ys, epsg = (float(a["X_FIRST"]), float(a["Y_FIRST"]), float(a["X_STEP"]),
                             float(a["Y_STEP"]), int(a["EPSG"]))
@@ -81,7 +91,8 @@ def adaptive_vertical(run_dir, out, min_px=120, max_plausible=150.0):
     lon, lat = t.transform(xf + xs * mi[1], yf + ys * mi[0])
     conf = "high" if thr >= 0.7 else ("medium" if thr >= 0.6 else "low")
     return {"max": -mn, "robust": robust, "n_hot": n_hot, "lat": round(lat, 4),
-            "lon": round(lon, 4), "thr": thr, "n_px": n_px, "conf": conf}
+            "lon": round(lon, 4), "thr": thr, "n_px": n_px, "conf": conf,
+            "robust_ref_relative": round(robust_ref_relative, 1)}
 
 
 def main():
@@ -136,7 +147,9 @@ def main():
 
     r = adaptive_vertical(run_dir, ROOT / "data" / "insar" / aoi / "vertical")
     result = {"aoi": aoi,
-              "robust_subsidence_mm_yr": round(r["robust"], 1),
+              "robust_subsidence_mm_yr": round(r["robust"], 1),  # median datum (reference-invariant)
+              "robust_ref_relative_mm_yr": r["robust_ref_relative"],  # diagnostic; large gap = bad auto-reference
+              "datum": "area-median (reference-invariant)",
               "peak_subsidence_mm_yr": round(r["max"], 1), "peak_cluster_px": r["n_hot"],
               "peak_lat": r["lat"], "peak_lon": r["lon"],
               "temp_coh_threshold": r["thr"], "reliable_px": r["n_px"], "confidence": r["conf"],
