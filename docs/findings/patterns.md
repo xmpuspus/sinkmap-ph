@@ -143,6 +143,43 @@ Meycauayan 0.4). The fastest-sinking inland hotspot sits inside San Miguel's
 footprint. (Doña Remedios Trinidad shows 21.6 km2 fast-sinking but ~0 flood-prone
 and is upland/forested, where coherence is weaker -- treated as secondary.)
 
+## More patterns (2026-06-20, round 4 -- multi-city scale-out)
+
+Computed by scripts/dig_newcities.py on the first three scale-out cities (Dagupan,
+Bacolod, Tacloban), processed through the lean pipeline with the median-datum fix.
+Median datum throughout (reference-invariant). Rates are differential.
+
+### 17. Dagupan is the second fast-sinking delta: ~35 cm gone at the hotspot in a decade
+Dagupan / Pangasinan (a long-documented subsidence delta) measures **~20 mm/yr
+robust (gated, temporal-coherence >= 0.7)**, with the hotspot at 16.02 N, 120.33 E
+reaching ~33-40 mm/yr on the fuller reliable mask and **~352 mm (35 cm) of
+cumulative subsidence since 2016**. The >5 cm footprint grew from ~0 to ~30 km2,
+the >10 cm footprint to ~24 km2. After Metro Manila (72), Dagupan is the fastest
+of the six measured cities -- and like Manila it is a groundwater-pumped alluvial
+delta, not a dense urban core. (It first read -2.8 mm/yr from a reference-datum
+bug: auto-reference landed on subsiding delta ground, where there is no stable
+high reference. The area-median datum recovers the real rate. See batch-status.md.)
+
+### 18. The deceleration is not just Manila -- it shows in every new city
+Splitting the decade in half, the fastest-sinking ground was faster in 2016-2020
+than 2021-2025 in all three new cities, matching finding #1: Dagupan hotspot
+-43 -> -31 mm/yr (slowed 12), Bacolod -14 -> -1 (slowed 13), Tacloban -7 -> -4
+(slowed 4). Across Dagupan more ground decelerated (29 km2) than accelerated
+(10 km2). The 2019 El Nino drought (peak groundwater pumping) is a plausible
+common driver -- the early half spans the drought pulse, the late half is
+post-drought -- so this may be "the drought pulse passed" rather than a permanent
+turn. Half-period rates are noisier than the full-period; reported as a multi-city
+pattern, not a forecast. (The slow island cities Cebu/Iloilo stayed near-linear,
+finding #7; the deceleration is a property of the fast hotspots.)
+
+### 19. It is the deltas, not the cities: a 10x regime split
+With six cities measured, the rate splits by landform, not by how built-up a place
+is. The big alluvial / groundwater deltas sink fast -- Metro Manila / Bulacan ~72,
+Dagupan ~20 mm/yr -- while the island and coastal-fill cities sink slowly -- Cebu
+~10, Iloilo ~10, Bacolod ~4, Tacloban ~3. An order of magnitude separates delta
+subsidence from island-city subsidence. (Extends finding #11's regional-vs-pinpoint
+split into a landform regime: the fast PH subsidence is a delta-aquifer story.)
+
 ## Candidate, not headline (round 3)
 
 - **Reclamation is not uniformly fast.** At the flagship made-ground sites
