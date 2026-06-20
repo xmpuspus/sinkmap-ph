@@ -83,6 +83,7 @@
   .r-tag{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); }
   .r-title{ display:block; font-size:13.5px; font-weight:600; line-height:1.32; margin:3px 0 4px; }
   .r-stat{ display:block; font-size:12.5px; font-weight:700; color:var(--ink); line-height:1.35; }
+  .r-blurb{ display:block; font-size:12px; color:var(--muted); line-height:1.45; margin-top:6px; }
   .r-ramp{ height:8px; border-radius:3px; margin:7px 0 1px; display:none; }
   .r-card.has-layer .r-ramp{ display:block; }
   .r-ramp-x{ display:none; justify-content:space-between; color:var(--muted); font-size:10px; }
@@ -116,14 +117,10 @@
   .fcard .ftag{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); }
   .fcard h3{ margin:3px 0 5px; font-size:13.5px; line-height:1.32; }
   .fcard .fstat{ font-size:13px; font-weight:700; color:var(--ink); line-height:1.35; }
-  .fcard .fblurb{ font-size:12px; color:var(--muted); line-height:1.5; margin-top:6px; display:none; }
-  .fcard.on .fblurb{ display:block; }
-  .fcard .fsrc{ font-size:10.5px; color:var(--muted); margin-top:6px; font-style:italic; display:none; }
-  .fcard.on .fsrc{ display:block; }
-  .framp{ height:9px; border-radius:3px; margin:7px 0 2px; display:none; }
-  .fcard.on .framp{ display:block; }
-  .framp-x{ display:none; justify-content:space-between; color:var(--muted); font-size:10.5px; }
-  .fcard.on .framp-x{ display:flex; }
+  .fcard .fblurb{ font-size:12px; color:var(--muted); line-height:1.5; margin-top:6px; }
+  .fcard .fsrc{ font-size:10.5px; color:var(--muted); margin-top:6px; font-style:italic; }
+  .framp{ height:9px; border-radius:3px; margin:7px 0 2px; }
+  .framp-x{ display:flex; justify-content:space-between; color:var(--muted); font-size:10.5px; }
   .callout{ display:flex; align-items:center; gap:5px; transform:translate(8px,-7px); white-space:nowrap; }
   .callout .cdot{ width:11px; height:11px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.4); }
   .callout .clab{ font-size:11px; font-weight:600; background:rgba(255,255,255,.9); color:var(--ink);
@@ -144,6 +141,8 @@
     #rail{ left:0; right:0; bottom:0; transform:none; width:100%; border-radius:14px 14px 0 0; }
     #rail .r-ramp, #rail .r-ramp-x{ display:none !important; }
     #rail .r-title{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    /* the full blurb lives in the See-all drawer; the rail shows a teaser on phones */
+    #rail .r-blurb{ display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
     #rail .r-foot{ font-size:10px; }
     #rail-open{ left:auto; right:12px; bottom:12px; transform:none; }
     #findings{ width:auto; right:12px; top:12px; bottom:auto; height:74%; }
@@ -212,6 +211,7 @@
       <span class="r-tag"></span>
       <span class="r-title"></span>
       <span class="r-stat"></span>
+      <span class="r-blurb"></span>
       <span class="r-ramp"></span>
       <span class="r-ramp-x"><span class="rl"></span><span class="rr"></span></span>
       <span class="r-cta"></span>
@@ -369,6 +369,7 @@ function renderRail(){
   card.querySelector(".r-tag").textContent = f.tag[LANG];
   card.querySelector(".r-title").textContent = f.title[LANG];
   card.querySelector(".r-stat").textContent = f.stat[LANG];
+  card.querySelector(".r-blurb").textContent = f.blurb[LANG];
   const ramp = card.querySelector(".r-ramp"), rx = card.querySelector(".r-ramp-x");
   if (ly && ly.legend){ ramp.style.background = RAMP[f.layer]||"#7a0177";
     rx.querySelector(".rl").textContent = ly.legend[LANG].left; rx.querySelector(".rr").textContent = ly.legend[LANG].right; }
