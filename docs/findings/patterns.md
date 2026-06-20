@@ -180,6 +180,19 @@ Dagupan ~20 mm/yr -- while the island and coastal-fill cities sink slowly -- Ceb
 subsidence from island-city subsidence. (Extends finding #11's regional-vs-pinpoint
 split into a landform regime: the fast PH subsidence is a delta-aquifer story.)
 
+### 20. The peak was the late 2010s, but not one synchronized year
+Testing whether the multi-city deceleration synchronizes at the 2019 El Nino: the
+fast cities' hotspot annual subsidence rate peaked in the late 2010s and has
+fallen since -- Metro Manila ~135 mm/yr in 2017-2018 down to ~40 by 2024, Dagupan
+54 in 2019 down to 14, Cebu and Tacloban peaking 2019. But the peak year spreads
+across 2017-2019 (Manila earliest), and the slow island cities (Iloilo, Bacolod)
+are too noisy to time (Iloilo's hotspot even reads -28 in 2022, plainly
+atmospheric). So the late-2010s maximum is real and broad, consistent with -- but
+not proof of -- a 2018-2019 dry-period groundwater pulse; it is not a clean
+single-year synchronized spike. Caveat: per-year hotspot rates carry large
+atmospheric variance (Manila's 137 in 2017 exceeds its 72 full-period rate), so
+the multi-year trend is robust while the exact peak year is not. (scripts/dig_timing.py)
+
 ## Candidate, not headline (round 3)
 
 - **Reclamation is not uniformly fast.** At the flagship made-ground sites
