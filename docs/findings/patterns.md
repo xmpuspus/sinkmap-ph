@@ -64,3 +64,27 @@ A small, consistent wet/dry oscillation appears across all three cities (the gro
 reads slightly more sunk in the wet season, ~2-3 mm), but it cannot be cleanly
 separated from residual seasonal tropospheric delay, so it is not reported as real
 ground "breathing."
+
+## More patterns (2026-06-20, round 2)
+
+### 8. The land sinks far faster than the sea rises
+Sea level in PH waters is rising roughly 5-7 mm/yr (PAGASA / satellite altimetry).
+At the Bulacan hotspot the ground drops ~72 mm/yr. So the effective sea-level rise
+for someone there is dominated ~10:1 by the land going down, not the ocean coming
+up. (Subsidence measured here; SLR cited.)
+
+### 9. It is the uneven sinking that breaks things
+Differential subsidence (the spatial gradient of the velocity, smoothed ~400 m):
+Metro Manila p95 ~27 mm/yr per km (locally steeper). Cebu ~7, Iloilo ~9. Uniform
+settlement is benign; this differential tilt is the mechanism that cracks roads,
+snaps pipes, and stresses bridges. Computed from the velocity raster gradient.
+
+### 10. A regional footprint, not a few dots (Metro Manila)
+Area sinking faster than 5 mm/yr: ~269 km2 (larger than Quezon City, ~166 km2);
+faster than 10 mm/yr: ~139 km2; faster than 20: ~48 km2. Central Luzon's
+subsidence is a regional field, not isolated hotspots.
+
+### 11. Cebu and Iloilo are pinpoint, not regional
+By contrast, Cebu has only ~5 km2 sinking >5 mm/yr and Iloilo ~3 km2, concentrated
+on reclaimed/coastal ground. Same phenomenon, two scales: regional in the Central
+Luzon aquifer, pinpoint in the island cities.
