@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Behavioral e2e for the sinkmap.ph web map (88 checks) via agent-browser.
+# Behavioral e2e for the sinkmap.ph web map (91 checks) via agent-browser.
 # Drives the real map and asserts loading, the sink-lapse slider/play, the flood
 # overlays, exposure, place cards, the surprising-findings panel (acceleration /
 # tilt / compound-exposure layers + callouts), and i18n against window.__diag /
@@ -97,20 +97,23 @@ http asset_findings "data/findings.json" 200
 http asset_accel "data/accel/metro-manila.png" 200
 http asset_tilt "data/tilt/metro-manila.png" 200
 http asset_compound "data/exposure/metro-manila-flood.geojson" 200
-chk findings_7 "window.__diag.findings===7"
+chk findings_10 "window.__diag.findings===10"
 chk finding_layers_2 "window.__diag.findingLayers===2"
 chk fl_accel "!!map.getLayer('fl-accel')"
 chk fl_tilt "!!map.getLayer('fl-tilt')"
 chk fl_compound "!!map.getLayer('fl-compound')"
 chk fl_accel_hidden_init "map.getLayoutProperty('fl-accel','visibility')" none
 chk drawer_opens "(function(){document.getElementById('fopen').click();return document.getElementById('findings').classList.contains('open')})()"
-chk cards_7 "document.querySelectorAll('#flist .fcard').length===7"
+chk cards_10 "document.querySelectorAll('#flist .fcard').length===10"
 # computed-value regression pins (update with the data, never loosen)
 chk accel_stat_294 "document.querySelectorAll('#flist .fcard')[0].querySelector('.fstat').innerText.indexOf('294')>=0"
 chk compound_stat_46 "document.querySelectorAll('#flist .fcard')[1].querySelector('.fstat').innerText.indexOf('46')>=0"
 chk footprint_stat_228 "document.querySelectorAll('#flist .fcard')[2].querySelector('.fstat').innerText.indexOf('228')>=0"
 chk muni_san_miguel "document.querySelectorAll('#flist .fcard')[3].querySelector('.fstat').innerText.indexOf('San Miguel')>=0"
 chk seavsland_72 "document.querySelectorAll('#flist .fcard')[6].querySelector('.fstat').innerText.indexOf('72')>=0"
+chk r4_dagupan_35 "document.querySelectorAll('#flist .fcard')[7].querySelector('.fstat').innerText.indexOf('35')>=0"
+chk r4_regime_10x "document.querySelectorAll('#flist .fcard')[8].querySelector('.fstat').innerText.indexOf('10')>=0"
+chk r4_deceleration "document.querySelectorAll('#flist .fcard')[9].querySelector('.fstat').innerText.toLowerCase().indexOf('slowed')>=0"
 # select / switch / toggle behavior
 chk accel_select "(function(){document.querySelectorAll('#flist .fcard')[0].click();return window.__diag.activeFinding})()" acceleration
 chk accel_layer_on "map.getLayoutProperty('fl-accel','visibility')" visible

@@ -199,6 +199,44 @@ def main():
         },
     ]
 
+    # round-4 scale-out findings (Dagupan + cross-city patterns), fly-to cards
+    try:
+        dg = _load("dig-dagupan.json")
+        cj = {c["id"]: c for c in json.loads((ROOT / "web" / "data" / "cities.json").read_text())["cities"]}
+        loss = abs(dg["cumulative_loss_at_hotspot_mm"]) / 10.0  # mm -> cm
+        flip = dg["hotspot"][::-1]  # [lat,lon] -> [lon,lat]
+        rate = lambda k: f"{cj[k]['rate_mm_yr']:.0f}"
+        findings += [
+            {"id": "dagupan", "tag": {"en": "New city", "tl": "Bagong lungsod"},
+             "title": {"en": "Dagupan: the second fast-sinking delta",
+                       "tl": "Dagupan: pangalawang mabilis lumubog na delta"},
+             "stat": {"en": f"about {loss:.0f} cm lost at the hotspot since 2016",
+                      "tl": f"mga {loss:.0f} cm nawala sa hotspot mula 2016"},
+             "blurb": {"en": f"Dagupan / Pangasinan measures about {rate('dagupan')} mm/yr (gated), with the hotspot dropping roughly {loss:.0f} cm since 2016. Like Metro Manila it is a groundwater-pumped alluvial delta, the fastest landform in the data.",
+                       "tl": f"Sinusukat ang Dagupan / Pangasinan sa mga {rate('dagupan')} mm/taon (gated); bumaba ang hotspot ng mga {loss:.0f} cm mula 2016. Tulad ng Metro Manila, isa itong delta na hinuhukay ng tubig sa ilalim, ang pinakamabilis na uri ng lupa sa datos."},
+             "fly": {"center": flip, "zoom": 10.2},
+             "callouts": [{"lngLat": flip, "label": {"en": f"about {loss:.0f} cm since 2016",
+                                                       "tl": f"mga {loss:.0f} cm mula 2016"}}]},
+            {"id": "regime", "tag": {"en": "Regime", "tl": "Uri ng lupa"},
+             "title": {"en": "It is the deltas, not the cities",
+                       "tl": "Ang mga delta, hindi ang mga lungsod"},
+             "stat": {"en": "deltas sink about 10x faster than island cities",
+                      "tl": "mga delta ~10x mas mabilis kaysa mga lungsod-isla"},
+             "blurb": {"en": f"With six cities measured, the rate splits by landform: alluvial deltas sink fast (Metro Manila ~{rate('metro-manila')}, Dagupan ~{rate('dagupan')} mm/yr) while island and coastal cities sink slowly (Cebu ~{rate('cebu-mandaue')}, Iloilo ~{rate('iloilo')}, Bacolod ~{rate('bacolod')}, Tacloban ~{rate('tacloban')}).",
+                       "tl": f"Sa anim na lungsod, nahahati ang bilis ayon sa uri ng lupa: mabilis ang mga delta (Metro Manila ~{rate('metro-manila')}, Dagupan ~{rate('dagupan')} mm/taon), mabagal ang mga lungsod-isla (Cebu ~{rate('cebu-mandaue')}, Iloilo ~{rate('iloilo')}, Bacolod ~{rate('bacolod')}, Tacloban ~{rate('tacloban')})."},
+             "fly": {"center": [122.6, 12.4], "zoom": 5.2}, "callouts": []},
+            {"id": "deceleration", "tag": {"en": "Past peak", "tl": "Lampas sa rurok"},
+             "title": {"en": "The fast hotspots are past their peak",
+                       "tl": "Lampas na sa rurok ang mabibilis na hotspot"},
+             "stat": {"en": "every measured hotspot slowed, 2016-20 vs 2021-25",
+                      "tl": "bumagal lahat ng hotspot, 2016-20 vs 2021-25"},
+             "blurb": {"en": "Splitting the decade in half, the fastest-sinking ground was faster in 2016-2020 than 2021-2025 in every measured city (Manila, Dagupan, Bacolod, Tacloban). The 2019 El Nino drought (peak groundwater pumping) is a plausible common driver. Observed, not a forecast.",
+                       "tl": "Hinati ang dekada sa dalawa: mas mabilis lumubog noong 2016-2020 kaysa 2021-2025 sa lahat ng sinukat na lungsod (Manila, Dagupan, Bacolod, Tacloban). Posibleng sanhi ang El Nino drought ng 2019. Sinukat, hindi hula."},
+             "fly": {"center": [122.6, 12.4], "zoom": 5.2}, "callouts": []},
+        ]
+    except Exception as e:  # noqa: BLE001
+        print("round-4 cards skipped:", e)
+
     payload = {
         "city": CITY,
         "layers": {
