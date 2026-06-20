@@ -1,4 +1,4 @@
-.PHONY: venv search dry-run submit status download test validate serve clean
+.PHONY: venv search dry-run submit status download test e2e validate serve clean
 
 PY := .venv/bin/python
 AOI ?= metro-manila
@@ -32,6 +32,12 @@ validate:
 
 test:
 	$(PY) -m pytest tests/ -q
+
+# Behavioral e2e for the web map (run `make serve` first; needs agent-browser).
+# Test the live site with: make e2e BASE=https://sinkmap-ph.vercel.app
+BASE ?= http://localhost:8788
+e2e:
+	zsh tests/e2e.sh $(BASE)
 
 serve:
 	$(PY) web/serve.py
