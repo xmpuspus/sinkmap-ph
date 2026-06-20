@@ -99,8 +99,8 @@
         "tl": "294 km² bumibilis vs 244 km² bumabagal"
       },
       "blurb": {
-        "en": "The worst hotspot slowed (-96 to -79 mm/yr between the 2016-2020 and 2021-2025 halves), yet more ground sped up than slowed. A zone about 6 km east more than doubled, from -18 to -46 mm/yr. Red is speeding up, green is slowing.",
-        "tl": "Bumagal ang pinakamabilis na lugar (-96 hanggang -79 mm/taon sa pagitan ng 2016-2020 at 2021-2025), pero mas malaking lupa ang bumilis. Isang lugar 6 km sa silangan ang lumampas sa doble, mula -18 hanggang -46 mm/taon. Pula ay bumibilis, berde ay bumabagal."
+        "en": "The worst hotspot slowed (-96 to -79 mm/yr between the 2016-2020 and 2021-2025 halves), yet more ground sped up than slowed. A zone about 6 km east more than doubled, from -18 to -46 mm/yr. On the map, orange is speeding up and purple is slowing.",
+        "tl": "Bumagal ang pinakamabilis na lugar (-96 hanggang -79 mm/taon sa pagitan ng 2016-2020 at 2021-2025), pero mas malaking lupa ang bumilis. Isang lugar 6 km sa silangan ang lumampas sa doble, mula -18 hanggang -46 mm/taon. Sa mapa, kahel ay bumibilis at lila ay bumabagal."
       },
       "fly": {
         "center": [
@@ -236,12 +236,12 @@
         "tl": "Ang pinakamalalim na baha ay hindi ang pinakamabilis lumubog"
       },
       "stat": {
-        "en": "sinking >10 mm/yr: 31% Low, 30% Medium, 17% High flood tier",
-        "tl": "lumulubog >10 mm/taon: 31% Mababa, 30% Katamtaman, 17% Mataas na baha"
+        "en": "most fast-sinking ground is in shallow or medium flood zones, not the deepest",
+        "tl": "karamihan ng mabilis lumulubog ay nasa mababaw o katamtamang baha, hindi sa pinakamalalim"
       },
       "blurb": {
-        "en": "By modeled flood-hazard depth class, fast-sinking ground concentrates in the Low and Medium tiers (31% and 30% sinking >10 mm/yr), not the deepest-flooding High tier (17%). Flood depth and sinking rate overlap but are largely separate fields.",
-        "tl": "Ayon sa lalim ng baha, ang mabilis lumulubog na lupa ay nasa Mababa at Katamtamang antas (31% at 30% na >10 mm/taon), hindi sa pinakamalalim na Mataas (17%). Magkasapaw pero magkahiwalay na larangan ang lalim ng baha at bilis ng paglubog."
+        "en": "Sort the ground by how deep the modeled flood gets. Of the ground sinking faster than 10 mm a year, 31% sits in shallow-flood areas and 30% in medium ones, but only 17% sits where floods are modeled to run deepest. So the places that sink fastest and the places that flood deepest mostly do not line up. They overlap, but they are largely separate maps.",
+        "tl": "Ayusin ang lupa ayon sa lalim ng baha. Sa lupang lumulubog nang higit 10 mm kada taon, 31% ay nasa mababaw na baha at 30% sa katamtaman, ngunit 17% lang ang nasa pinakamalalim. Kaya ang mabilis lumubog at ang pinakamalalim na baha ay kadalasang hindi nagtutugma. Magkasapaw, pero halos magkahiwalay na mapa."
       },
       "fly": {
         "center": [
@@ -264,8 +264,8 @@
         "tl": "Ang hindi pantay na paglubog ang sumisira ng kalsada at tubo"
       },
       "stat": {
-        "en": "tilt up to 70 mm/yr per km (p95 18)",
-        "tl": "hilig hanggang 70 mm/taon kada km (p95 18)"
+        "en": "the ground tilts up to 70 mm/yr per km",
+        "tl": "humihilig ang lupa hanggang 70 mm/taon kada km"
       },
       "blurb": {
         "en": "Uniform settlement is harmless; it is the spatial gradient, where ground drops faster than its neighbor, that cracks roads, snaps pipes, and stresses bridges. Purple marks the steepest tilt, up to 70 mm/yr per km.",
