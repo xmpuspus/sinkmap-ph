@@ -45,11 +45,16 @@ def _warp_bounds(tif):
 
 
 def accel_png(city=CITY):
-    """Acceleration: red = subsidence speeding up, green = slowing, center clear."""
+    """Acceleration: orange = subsidence speeding up, purple = slowing, center clear.
+
+    PuOr is a ColorBrewer colorblind-safe diverging ramp (orange at the low/
+    speeding-up end, purple at the high/slowing end). It replaces the earlier
+    red/green RdYlGn, which collapsed to one khaki under deuteranopia.
+    """
     arr, bounds = _warp_bounds(ROOT / "data" / "insar" / city / "accel.tif")
     vmin, vmax = -20.0, 20.0
     norm = mcolors.TwoSlopeNorm(vmin=vmin, vcenter=0.0, vmax=vmax)
-    rgba = matplotlib.colormaps["RdYlGn"](norm(np.clip(arr, vmin, vmax)))
+    rgba = matplotlib.colormaps["PuOr"](norm(np.clip(arr, vmin, vmax)))
     alpha = np.clip((np.abs(arr) - 3.0) / 6.0, 0.0, 1.0) * 0.9
     rgba[..., 3] = np.where(np.isfinite(arr), alpha, 0.0)
     out = ROOT / "web" / "data" / "accel" / f"{city}.png"
