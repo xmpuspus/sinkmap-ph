@@ -1,4 +1,4 @@
-# Surprising patterns in the data (2026-06-20)
+# Subsidence patterns in the data (2026-06-20)
 
 Findings computed from the v1 velocity rasters and MintPy time-series (Metro
 Manila, Cebu, Iloilo). Each is backed by a number; caveats are stated. Subsidence

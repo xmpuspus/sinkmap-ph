@@ -16,14 +16,14 @@
 > The fastest sinking in Metro Manila is **inland** in the Bulacan/Pampanga lowland,
 > not the coast, and Dagupan has lost about 35 cm at its hotspot since 2016. A
 > single-file MapLibre map carries a velocity layer, a 2016-2025 "watch it sink"
-> slider, toggleable flood extents, a building-exposure read, a surprising-findings
+> slider, toggleable flood extents, a building-exposure read, a key-findings
 > panel, and a methodology page, with the coincidence-not-causation disclaimer
 > throughout.
 
 [![sinkmap.ph walkthrough](docs/demo.gif)](https://sinkmap-ph.vercel.app)
 
 <sub>Real recording of the live map ([sinkmap-ph.vercel.app](https://sinkmap-ph.vercel.app),
-via `scripts/record_demo.py`): the nationwide overview, the surprising-findings panel
+via `scripts/record_demo.py`): the nationwide overview, the key-findings panel
 (the acceleration layer with on-map callouts), a measured-city card (Dagupan, ~20
 mm/yr, coverage-gated), "watch it sink" accumulating 2016-2025 displacement on Metro
 Manila (the readout climbs to ~325 mm), and a recent Sentinel-1 flood extent toggled
@@ -65,7 +65,7 @@ coincidence. Full write-ups in `docs/findings/`. The map is a single-file MapLib
 site with a velocity layer, a 2016-2025 "watch it sink" time slider, toggleable
 flood extents, and a building-exposure read (OSM buildings on fast-sinking ground:
 ~1,900 in Metro Manila above 15 mm/yr, ~560 in Cebu, ~410 in Iloilo). A
-**surprising-findings panel** flies to and overlays the computed patterns:
+**key-findings panel** flies to and overlays the computed patterns:
 an acceleration map (the worst hotspot slowed from -96 to -79 mm/yr while a zone
 6 km east doubled, and 294 km2 sped up vs 244 km2 slowed), a differential-tilt
 layer (up to 70 mm/yr per km), the double-exposed buildings (46% of fast-sinking
@@ -140,7 +140,7 @@ boundary is the honest core of this project:
 - **`tests/`**: pytest over the LOS->vertical math, the GO/NO-GO gate band, the SBAS
   pairing, and the AOI registry invariants; plus `e2e.sh`, a 88-check behavioral
   suite that drives the live map (loading, the sink-lapse slider/play, the flood
-  toggles, exposure, place cards, the surprising-findings panel with its
+  toggles, exposure, place cards, the key-findings panel with its
   acceleration / tilt / compound-exposure layers and callouts, EN/TL). Run
   `make e2e` (or `make e2e BASE=https://sinkmap-ph.vercel.app`).
 
