@@ -1,9 +1,10 @@
 #!/bin/zsh
-# Behavioral e2e for the sinkmap.ph web map (95 checks) via agent-browser.
+# Behavioral e2e for the sinkmap.ph web map (115 checks) via agent-browser.
 # Drives the real map and asserts loading, the sink-lapse slider/play, the flood
 # overlays, exposure, place cards, the surprising-findings panel (acceleration /
-# tilt / compound-exposure layers + callouts), and i18n against window.__diag /
-# window.map / DOM.
+# tilt / compound-exposure layers + callouts), the story rail (preview/commit/walk/
+# minimize), find-your-city, the colorblind-safe accel ramp, and i18n against
+# window.__diag / window.map / DOM.
 #   make serve &              # Range-capable server on :8788
 #   tests/e2e.sh              # or: tests/e2e.sh https://sinkmap-ph.vercel.app
 set -u
@@ -140,6 +141,34 @@ chk drawer_closes "(function(){document.getElementById('fclose').click();return 
 # --- i18n ---
 chk lang_tl "(function(){document.getElementById('tl').click();return document.getElementById('t-sub').innerText.toLowerCase().indexOf('lupa')>=0})()"
 chk lang_en "(function(){document.getElementById('en').click();return document.getElementById('t-sub').innerText.toLowerCase().indexOf('ground')>=0})()"
+
+# --- story rail + find-your-city (fresh load for a clean rail initial state) ---
+agent-browser open "$BASE" >/dev/null 2>&1
+for i in {1..30}; do [ "$(ev 'window.__diag&&window.__diag.ready')" = "true" ] && break; agent-browser wait 500 >/dev/null 2>&1; done
+chk rail_open_init "window.__diag.railOpen"
+chk rail_index_0 "window.__diag.railIndex===0"
+chk rail_card_accel "document.querySelector('#rail .r-tag').innerText.toLowerCase().indexOf('acceleration')>=0"
+# stepping is preview-only until the user commits (calm: no surprise camera motion on load)
+chk rail_next_preview "(function(){document.getElementById('rail-next').click();return window.__diag.railIndex})()" 1
+chk rail_preview_no_layer "map.getLayoutProperty('fl-compound','visibility')" none
+chk rail_preview_no_active "window.__diag.activeFinding" null
+# tapping the card commits the current finding to the map (fly + layer)
+chk rail_show_commits "(function(){document.getElementById('rail-card').click();return window.__diag.activeFinding})()" compound
+chk rail_show_layer_on "map.getLayoutProperty('fl-compound','visibility')" visible
+# once a walk is underway, next drives the map (compound -> footprint)
+chk rail_walk_follows "(function(){document.getElementById('rail-next').click();return window.__diag.activeFinding})()" footprint
+chk rail_min "(function(){document.getElementById('rail-min').click();return window.__diag.railOpen})()" false
+chk rail_reopen_tab "document.getElementById('rail-open').classList.contains('show')"
+chk rail_reopen "(function(){document.getElementById('rail-open').click();return window.__diag.railOpen})()" true
+chk rail_disc_visible "document.getElementById('t-disc').innerText.toLowerCase().indexOf('forecast')>=0"
+# colorblind-safe accel ramp: PuOr orange (speeding up) present, old red/green green gone
+chk accel_ramp_cbsafe "document.querySelector('#rail .r-ramp').style.background.indexOf('127, 59, 8')>=0"
+chk accel_ramp_no_green "document.querySelector('#rail .r-ramp').style.background.indexOf('26, 152, 80')<0"
+chk findcity_opts "document.querySelectorAll('#findcity option').length===11"
+chk findcity_groups "document.querySelectorAll('#findcity optgroup').length===2"
+chk findcity_measured "(function(){var s=document.getElementById('findcity');s.value='c:dagupan';s.dispatchEvent(new Event('change'));return document.getElementById('cd-name').innerText.indexOf('Dagupan')>=0})()"
+chk findcity_limited "(function(){document.getElementById('cd-close').click();var s=document.getElementById('findcity');s.value='l:legazpi';s.dispatchEvent(new Event('change'));return document.getElementById('cd-body').innerText.toLowerCase().indexOf('coherence')>=0})()"
+chk findcity_reset "document.getElementById('findcity').value===''"
 
 echo "----------------------------------------"
 echo "RESULT: $pass passed, $fail failed (of $((pass+fail)))"
