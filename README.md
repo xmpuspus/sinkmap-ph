@@ -4,7 +4,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![InSAR: Sentinel-1 HyP3 + MintPy](https://img.shields.io/badge/InSAR-Sentinel--1%20HyP3%20%2B%20MintPy-success.svg)](docs/findings/metro-manila-v1.md)
 [![Validated: 3 metros vs Aslan 2024](https://img.shields.io/badge/validated-3%20metros%20vs%20Aslan%202024-success.svg)](docs/findings/phase2-multicity.md)
-[![e2e: 44 checks](https://img.shields.io/badge/e2e-44%20checks-success.svg)](tests/e2e.sh)
+[![e2e: 78 checks](https://img.shields.io/badge/e2e-78%20checks-success.svg)](tests/e2e.sh)
 [![Status: alpha](https://img.shields.io/badge/status-alpha-orange.svg)](README.md)
 
 > **sinkmap.ph** is the measured record of how fast the ground is sinking under
@@ -50,8 +50,14 @@ ground (about 5x); in Cebu 18% against 2% (about 9x); Iloilo shows no preferenti
 coincidence. Full write-ups in `docs/findings/`. The map is a single-file MapLibre
 site with a velocity layer, a 2016-2025 "watch it sink" time slider, toggleable
 flood extents, and a building-exposure read (OSM buildings on fast-sinking ground:
-~1,900 in Metro Manila above 15 mm/yr, ~560 in Cebu, ~410 in Iloilo). `make serve`,
-then `web/index.html`.
+~1,900 in Metro Manila above 15 mm/yr, ~560 in Cebu, ~410 in Iloilo). A
+**surprising-findings panel** flies to and overlays the computed patterns:
+an acceleration map (the worst hotspot slowed from -96 to -79 mm/yr while a zone
+6 km east doubled, and 294 km2 sped up vs 244 km2 slowed), a differential-tilt
+layer (up to 70 mm/yr per km), the double-exposed buildings (46% of fast-sinking
+buildings are also flood-prone), and the most-exposed town (San Miguel, Bulacan).
+Every number is computed by `scripts/analysis.py` and baked into
+`web/data/findings.json`, not hand-typed. `make serve`, then `web/index.html`.
 
 ## What this measures
 
@@ -118,10 +124,11 @@ boundary is the honest core of this project:
 - **`docs/planning/`**: the locked spec (`SCOPE.md`, `CITIES.md`,
   `METHOD-decomposition.md`, `BUILD-PROMPT.md`).
 - **`tests/`**: pytest over the LOS->vertical math, the GO/NO-GO gate band, the SBAS
-  pairing, and the AOI registry invariants; plus `e2e.sh`, a 44-check behavioral
+  pairing, and the AOI registry invariants; plus `e2e.sh`, a 78-check behavioral
   suite that drives the live map (loading, the sink-lapse slider/play, the flood
-  toggles, exposure, place cards, EN/TL). Run `make e2e` (or
-  `make e2e BASE=https://sinkmap-ph.vercel.app`).
+  toggles, exposure, place cards, the surprising-findings panel with its
+  acceleration / tilt / compound-exposure layers and callouts, EN/TL). Run
+  `make e2e` (or `make e2e BASE=https://sinkmap-ph.vercel.app`).
 
 ## What this is not
 
@@ -171,7 +178,7 @@ Build the web layers from the MintPy outputs and serve the map locally:
 SINKMAP_EE_KEY=~/Desktop/leaves-ph/.ee-key.json .venv/bin/python scripts/make_flood_layers.py
 
 make serve     # Range-capable server on :8788, then open web/index.html
-make e2e       # 44-check behavioral suite against the running map
+make e2e       # 78-check behavioral suite against the running map
 ```
 
 ![sinkmap.ph watching Metro Manila sink, 2016-2025](docs/sink-lapse.gif)

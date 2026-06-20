@@ -1,7 +1,9 @@
 #!/bin/zsh
-# Behavioral e2e for the sinkmap.ph web map (40 checks) via agent-browser.
+# Behavioral e2e for the sinkmap.ph web map (78 checks) via agent-browser.
 # Drives the real map and asserts loading, the sink-lapse slider/play, the flood
-# overlays, exposure, place cards, and i18n against window.__diag / window.map / DOM.
+# overlays, exposure, place cards, the surprising-findings panel (acceleration /
+# tilt / compound-exposure layers + callouts), and i18n against window.__diag /
+# window.map / DOM.
 #   make serve &              # Range-capable server on :8788
 #   tests/e2e.sh              # or: tests/e2e.sh https://sinkmap-ph.vercel.app
 set -u
@@ -78,6 +80,44 @@ chk glow_restored "map.getLayoutProperty('e-metro-manila','visibility')" visible
 # --- flood overlay toggle ---
 chk flood_on "(function(){var c=document.querySelectorAll('#flood-toggles input')[0];if(!c.checked)c.click();return map.getLayoutProperty('f-carina-habagat-2024','visibility')})()" visible
 chk flood_off "(function(){var c=document.querySelectorAll('#flood-toggles input')[0];if(c.checked)c.click();return map.getLayoutProperty('f-carina-habagat-2024','visibility')})()" none
+
+# --- surprising-findings panel + analysis layers ---
+http asset_findings "data/findings.json" 200
+http asset_accel "data/accel/metro-manila.png" 200
+http asset_tilt "data/tilt/metro-manila.png" 200
+http asset_compound "data/exposure/metro-manila-flood.geojson" 200
+chk findings_7 "window.__diag.findings===7"
+chk finding_layers_2 "window.__diag.findingLayers===2"
+chk fl_accel "!!map.getLayer('fl-accel')"
+chk fl_tilt "!!map.getLayer('fl-tilt')"
+chk fl_compound "!!map.getLayer('fl-compound')"
+chk fl_accel_hidden_init "map.getLayoutProperty('fl-accel','visibility')" none
+chk drawer_opens "(function(){document.getElementById('fopen').click();return document.getElementById('findings').classList.contains('open')})()"
+chk cards_7 "document.querySelectorAll('#flist .fcard').length===7"
+# computed-value regression pins (update with the data, never loosen)
+chk accel_stat_294 "document.querySelectorAll('#flist .fcard')[0].querySelector('.fstat').innerText.indexOf('294')>=0"
+chk compound_stat_46 "document.querySelectorAll('#flist .fcard')[1].querySelector('.fstat').innerText.indexOf('46')>=0"
+chk footprint_stat_228 "document.querySelectorAll('#flist .fcard')[2].querySelector('.fstat').innerText.indexOf('228')>=0"
+chk muni_san_miguel "document.querySelectorAll('#flist .fcard')[3].querySelector('.fstat').innerText.indexOf('San Miguel')>=0"
+chk seavsland_72 "document.querySelectorAll('#flist .fcard')[6].querySelector('.fstat').innerText.indexOf('72')>=0"
+# select / switch / toggle behavior
+chk accel_select "(function(){document.querySelectorAll('#flist .fcard')[0].click();return window.__diag.activeFinding})()" acceleration
+chk accel_layer_on "map.getLayoutProperty('fl-accel','visibility')" visible
+chk accel_callouts_2 "window.__diag.callouts===2"
+chk callout_dom_2 "document.querySelectorAll('.callout').length===2"
+chk tilt_select "(function(){document.querySelectorAll('#flist .fcard')[5].click();return map.getLayoutProperty('fl-tilt','visibility')})()" visible
+chk accel_off_on_switch "map.getLayoutProperty('fl-accel','visibility')" none
+chk tilt_no_callouts "window.__diag.callouts===0"
+chk compound_select "(function(){document.querySelectorAll('#flist .fcard')[1].click();return map.getLayoutProperty('fl-compound','visibility')})()" visible
+chk compound_toggle_off "(function(){document.querySelectorAll('#flist .fcard')[1].click();return window.__diag.activeFinding})()" null
+chk compound_hidden_off "map.getLayoutProperty('fl-compound','visibility')" none
+chk muni_callout_1 "(function(){document.querySelectorAll('#flist .fcard')[3].click();return document.querySelectorAll('.callout').length})()" 1
+chk lapse_clears_finding "(function(){document.querySelectorAll('#flist .fcard')[0].click();document.getElementById('mode-l').click();return window.__diag.activeFinding})()" null
+chk lapse_hides_finding_layer "map.getLayoutProperty('fl-accel','visibility')" none
+chk back_to_rate "(function(){document.getElementById('mode-v').click();return window.__diag.mode})()" v
+chk findings_tl "(function(){document.getElementById('ftl').click();return document.querySelector('#flist .fcard .ftag').innerText.toLowerCase().indexOf('pagbilis')>=0})()"
+chk findings_en "(function(){document.getElementById('fen').click();return document.querySelector('#flist .fcard .ftag').innerText.toLowerCase().indexOf('acceleration')>=0})()"
+chk drawer_closes "(function(){document.getElementById('fclose').click();return document.getElementById('findings').classList.contains('open')})()" false
 
 # --- i18n ---
 chk lang_tl "(function(){document.getElementById('tl').click();return document.getElementById('t-sub').innerText.toLowerCase().indexOf('lupa')>=0})()"
