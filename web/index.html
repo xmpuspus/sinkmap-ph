@@ -153,7 +153,7 @@ const CN = {
     anchor: "Published rate", reproduces: "Reproduces the published",
     confidence: "Confidence", flood: "On flood-prone ground", background: "vs all measured ground",
     limited: "Coherence-limited", limited_body: "The satellite signal here is too decorrelated over this area for a reliable rate with this method. It would need persistent-scatterer InSAR or a tighter urban area.",
-    go: "Validated",
+    go: "Validated", measured: "Measured (coverage-gated)", marginal: "Provisional, marginal coverage",
     mode_v: "Rate", mode_l: "Watch it sink",
     legend_lapse: "Cumulative ground motion since 2016", sink_more: "more sinking", rise_more: "rising",
     floods: "Recent flood extents (Sentinel-1)",
@@ -172,7 +172,7 @@ const CN = {
     anchor: "Nailathalang bilis", reproduces: "Tumutugma sa nailathalang",
     confidence: "Kumpiyansa", flood: "Sa lupang madaling bahain", background: "kumpara sa lahat ng sinukat",
     limited: "Limitado ang kohirensiya", limited_body: "Masyadong magulo ang signal ng satellite dito para sa maaasahang bilis sa pamamaraang ito. Kailangan ng persistent-scatterer InSAR o mas masikip na lugar-urban.",
-    go: "Napatunayan",
+    go: "Napatunayan", measured: "Sinukat (batay sa saklaw)", marginal: "Pansamantala, kulang ang saklaw",
     mode_v: "Bilis", mode_l: "Panoorin lumubog",
     legend_lapse: "Naipong paggalaw ng lupa mula 2016", sink_more: "mas lumulubog", rise_more: "tumataas",
     floods: "Saklaw ng kamakailang baha (Sentinel-1)",
@@ -191,6 +191,7 @@ window.__diag = { ready:false, cities:0, layers:0, mode:"v", frame:0, playing:fa
 const NAMES = {
   "metro-manila":"Metro Manila / Bulacan", "cebu-mandaue":"Cebu / Mandaue",
   "iloilo":"Iloilo City", "legazpi":"Legazpi", "davao":"Davao",
+  "dagupan":"Dagupan / Pangasinan", "bacolod":"Bacolod / Negros", "tacloban":"Tacloban / Leyte",
 };
 
 const map = new maplibregl.Map({
@@ -348,7 +349,9 @@ function showCity(c){
   document.getElementById("cd-rate").innerHTML =
     `${Math.round(c.rate_mm_yr)} <small>${t.peryr}</small>`;
   let h = `<div style="margin:-4px 0 8px;font-size:12px;color:var(--muted)">${t.rate_lead} ${c.rate_mm_yr} ${t.peryr} (2016–2025).</div>`;
-  h += `<span class="badge b-go">${t.go}</span>`;
+  const marginal = c.verdict === "MARGINAL";
+  const badgeText = c.anchor_mm_yr != null ? t.go : (marginal ? t.marginal : t.measured);
+  h += `<span class="badge ${marginal ? "b-lim" : "b-go"}">${badgeText}</span>`;
   h += `<div style="height:8px"></div>`;
   if (c.anchor_mm_yr) h += `<div class="kv"><span>${t.anchor} (Aslan 2024)</span><span>${c.anchor_mm_yr} ${t.peryr}</span></div>`;
   h += `<div class="kv"><span>${t.confidence}</span><span>${c.confidence}</span></div>`;

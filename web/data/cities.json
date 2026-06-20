@@ -202,6 +202,198 @@
       "buildings_on_sinking_ground": 409,
       "buildings_threshold_mm_yr": 6.0,
       "exposure_geojson": "data/exposure/iloilo.geojson"
+    },
+    {
+      "id": "dagupan",
+      "bounds": {
+        "west": 120.278,
+        "south": 15.99823,
+        "east": 120.42203,
+        "north": 16.14226
+      },
+      "center": [
+        120.35,
+        16.0702
+      ],
+      "rate_mm_yr": 19.5,
+      "peak_mm_yr": 24.6,
+      "anchor_mm_yr": null,
+      "ratio": null,
+      "confidence": "high",
+      "verdict": "GO",
+      "flood_pct_high_sub": null,
+      "flood_pct_background": null,
+      "png": "data/velocity/dagupan.png",
+      "lapse": [
+        {
+          "date": "2016-01",
+          "png": "data/lapse/dagupan/00.png",
+          "cum_mm": 0
+        },
+        {
+          "date": "2017-07",
+          "png": "data/lapse/dagupan/01.png",
+          "cum_mm": -21
+        },
+        {
+          "date": "2018-10",
+          "png": "data/lapse/dagupan/02.png",
+          "cum_mm": -47
+        },
+        {
+          "date": "2020-04",
+          "png": "data/lapse/dagupan/03.png",
+          "cum_mm": -73
+        },
+        {
+          "date": "2021-07",
+          "png": "data/lapse/dagupan/04.png",
+          "cum_mm": -94
+        },
+        {
+          "date": "2023-01",
+          "png": "data/lapse/dagupan/05.png",
+          "cum_mm": -115
+        },
+        {
+          "date": "2024-04",
+          "png": "data/lapse/dagupan/06.png",
+          "cum_mm": -132
+        },
+        {
+          "date": "2025-10",
+          "png": "data/lapse/dagupan/07.png",
+          "cum_mm": -151
+        }
+      ]
+    },
+    {
+      "id": "bacolod",
+      "bounds": {
+        "west": 122.91952,
+        "south": 10.61968,
+        "east": 123.04034,
+        "north": 10.73031
+      },
+      "center": [
+        122.9799,
+        10.675
+      ],
+      "rate_mm_yr": 4.2,
+      "peak_mm_yr": 10.9,
+      "anchor_mm_yr": null,
+      "ratio": null,
+      "confidence": "high",
+      "verdict": "GO",
+      "flood_pct_high_sub": null,
+      "flood_pct_background": null,
+      "png": "data/velocity/bacolod.png",
+      "lapse": [
+        {
+          "date": "2016-01",
+          "png": "data/lapse/bacolod/00.png",
+          "cum_mm": 0
+        },
+        {
+          "date": "2017-07",
+          "png": "data/lapse/bacolod/01.png",
+          "cum_mm": -24
+        },
+        {
+          "date": "2018-10",
+          "png": "data/lapse/bacolod/02.png",
+          "cum_mm": -39
+        },
+        {
+          "date": "2020-04",
+          "png": "data/lapse/bacolod/03.png",
+          "cum_mm": -54
+        },
+        {
+          "date": "2021-07",
+          "png": "data/lapse/bacolod/04.png",
+          "cum_mm": -67
+        },
+        {
+          "date": "2023-01",
+          "png": "data/lapse/bacolod/05.png",
+          "cum_mm": -80
+        },
+        {
+          "date": "2024-04",
+          "png": "data/lapse/bacolod/06.png",
+          "cum_mm": -86
+        },
+        {
+          "date": "2025-10",
+          "png": "data/lapse/bacolod/07.png",
+          "cum_mm": -92
+        }
+      ]
+    },
+    {
+      "id": "tacloban",
+      "bounds": {
+        "west": 124.94891,
+        "south": 11.19861,
+        "east": 125.06111,
+        "north": 11.29114
+      },
+      "center": [
+        125.005,
+        11.2449
+      ],
+      "rate_mm_yr": 3.1,
+      "peak_mm_yr": 5.6,
+      "anchor_mm_yr": null,
+      "ratio": null,
+      "confidence": "high",
+      "verdict": "MARGINAL",
+      "flood_pct_high_sub": null,
+      "flood_pct_background": null,
+      "png": "data/velocity/tacloban.png",
+      "lapse": [
+        {
+          "date": "2016-01",
+          "png": "data/lapse/tacloban/00.png",
+          "cum_mm": 0
+        },
+        {
+          "date": "2017-07",
+          "png": "data/lapse/tacloban/01.png",
+          "cum_mm": -15
+        },
+        {
+          "date": "2018-10",
+          "png": "data/lapse/tacloban/02.png",
+          "cum_mm": -35
+        },
+        {
+          "date": "2020-04",
+          "png": "data/lapse/tacloban/03.png",
+          "cum_mm": -59
+        },
+        {
+          "date": "2021-07",
+          "png": "data/lapse/tacloban/04.png",
+          "cum_mm": -62
+        },
+        {
+          "date": "2023-01",
+          "png": "data/lapse/tacloban/05.png",
+          "cum_mm": -60
+        },
+        {
+          "date": "2024-04",
+          "png": "data/lapse/tacloban/06.png",
+          "cum_mm": -81
+        },
+        {
+          "date": "2025-10",
+          "png": "data/lapse/tacloban/07.png",
+          "cum_mm": -82
+        }
+      ]
     }
   ],
   "coherence_limited": [
