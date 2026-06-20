@@ -98,13 +98,14 @@ def main():
     resfile.parent.mkdir(parents=True, exist_ok=True)
     anchor = reg.get(aoi).published_rate_mm_yr_max
 
+    # Stream-fetch each ~200 MB product, keep only the 5 AOI-clipped bands, delete
+    # the raw. Peak disk < 1 GB, ~40 MB kept; no 16 GB/city hoard. Always called:
+    # fetch_clip is per-product resumable (skips products already clipped, fetches
+    # the rest), so a partially-clipped dir is completed, not mistaken for done.
+    from pipeline.insar.lean_fetch import fetch_clip
+    print(f"[{aoi}] lean fetch + clip (resumable; no raw hoarding) ...", flush=True)
+    fetch_clip(aoi)
     clipped = ROOT / "data" / "insar" / aoi / "clipped"
-    if not (clipped.exists() and any(clipped.iterdir())):
-        # Stream-fetch each ~200 MB product, keep only the 5 AOI-clipped bands,
-        # delete the raw. Peak disk < 1 GB, ~40 MB kept; no 16 GB/city hoard.
-        from pipeline.insar.lean_fetch import fetch_clip
-        print(f"[{aoi}] lean fetch + clip (no raw hoarding) ...", flush=True)
-        fetch_clip(aoi)
     hyp3 = ROOT / "data" / "insar" / aoi / "hyp3_products"
     if hyp3.exists():  # remove any stale full-product dir from an older run
         import shutil
