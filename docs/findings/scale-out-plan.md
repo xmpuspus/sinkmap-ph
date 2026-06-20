@@ -24,7 +24,10 @@ download of SLCs). Coverage over the Philippines, measured by `asf_search`:
 
 **ARIA covers Luzon, not the Visayas or Mindanao.** That is still most of the
 reachable GO-now list (the NCR sprawl, Dagupan, Angeles, Batangas, Naga, etc.) and
-the two fastest deltas. Recipe per Luzon city, no credits:
+the two fastest deltas. ARIA-tools is installed and verified: a `sinkmap-aria`
+conda env (aria-tools 1.6.1, solved with libmamba) has the CLI, and
+`ariaDownload.py -o Count` returns 414 GUNW products over a one-year Dagupan box,
+so the query + tooling work end to end. Recipe per Luzon city, no credits:
 
 ```bash
 # in the sinkmap-aria env (aria-tools on conda-forge)
