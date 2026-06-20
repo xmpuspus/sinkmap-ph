@@ -4,6 +4,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![InSAR: Sentinel-1 HyP3 + MintPy](https://img.shields.io/badge/InSAR-Sentinel--1%20HyP3%20%2B%20MintPy-success.svg)](docs/findings/metro-manila-v1.md)
 [![Validated: 3 metros vs Aslan 2024](https://img.shields.io/badge/validated-3%20metros%20vs%20Aslan%202024-success.svg)](docs/findings/phase2-multicity.md)
+[![e2e: 44 checks](https://img.shields.io/badge/e2e-44%20checks-success.svg)](tests/e2e.sh)
 [![Status: alpha](https://img.shields.io/badge/status-alpha-orange.svg)](README.md)
 
 > **sinkmap.ph** is the measured record of how fast the ground is sinking under
@@ -19,11 +20,12 @@
 
 [![sinkmap.ph walkthrough](docs/demo.gif)](https://sinkmap-ph.vercel.app)
 
-<sub>Real recording of the live map ([sinkmap-ph.vercel.app](https://sinkmap-ph.vercel.app)):
-click a city for its measured subsidence rate, the published reference, the flood
-coincidence, and the count of buildings on fast-sinking ground; toggle the recent
-Sentinel-1 flood extents. The apex **sinkmap.ph** goes live once its dot.ph A record
-points to Vercel.</sub>
+<sub>Real recording of the live map ([sinkmap-ph.vercel.app](https://sinkmap-ph.vercel.app),
+via `scripts/record_demo.py`): click Metro Manila for its measured rate, the published
+reference, the flood coincidence, and the buildings on fast-sinking ground; play
+"watch it sink" to accumulate 2016-2025 displacement (the readout climbs to ~325 mm);
+toggle a recent Sentinel-1 flood extent (it flies in and paints over the velocity
+layer). The apex **sinkmap.ph** goes live once its dot.ph A record points to Vercel.</sub>
 
 **Status: validated, with a working map.** The pipeline runs end to end and three
 metros reproduce their published rates within a factor of two:
@@ -116,7 +118,10 @@ boundary is the honest core of this project:
 - **`docs/planning/`**: the locked spec (`SCOPE.md`, `CITIES.md`,
   `METHOD-decomposition.md`, `BUILD-PROMPT.md`).
 - **`tests/`**: pytest over the LOS->vertical math, the GO/NO-GO gate band, the SBAS
-  pairing, and the AOI registry invariants.
+  pairing, and the AOI registry invariants; plus `e2e.sh`, a 44-check behavioral
+  suite that drives the live map (loading, the sink-lapse slider/play, the flood
+  toggles, exposure, place cards, EN/TL). Run `make e2e` (or
+  `make e2e BASE=https://sinkmap-ph.vercel.app`).
 
 ## What this is not
 
@@ -160,10 +165,13 @@ Build the web layers from the MintPy outputs and serve the map locally:
 ```bash
 # render the velocity + sink-lapse PNGs and cities.json (MintPy env, has gdal):
 ~/anaconda3/envs/sinkmap-mintpy312/bin/python scripts/make_web_layers.py
+# count OSM buildings on fast-sinking ground (exposure glow + place-card stat):
+~/anaconda3/envs/sinkmap-mintpy312/bin/python scripts/make_exposure.py
 # derive the flood-extent overlays (GEE, personal key):
 SINKMAP_EE_KEY=~/Desktop/leaves-ph/.ee-key.json .venv/bin/python scripts/make_flood_layers.py
 
-make serve   # Range-capable server on :8788, then open web/index.html
+make serve     # Range-capable server on :8788, then open web/index.html
+make e2e       # 44-check behavioral suite against the running map
 ```
 
 ![sinkmap.ph watching Metro Manila sink, 2016-2025](docs/sink-lapse.gif)
