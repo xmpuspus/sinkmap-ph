@@ -90,14 +90,37 @@ flags a bad auto-reference). On the median datum Dagupan is **19.5 mm/yr**. This
 matters for scale-out: many GO-now targets are flat deltas, so the reference-
 relative rate would have mis-reported them as non-sinking. (`pipeline/insar/process.py`)
 
-## Burst-InSAR validation (in progress, network-blocked)
+## Burst-InSAR validation: the result that stops a bad scale-out
 
-Submitted hotspot-burst stacks for the five known-outcome cities to compare burst
-vs GAMMA before scaling. Burst pricing confirmed ~1 credit/pair (10x cheaper than
-GAMMA). Four fit the 320-credit remainder (Cebu, Metro Manila, Iloilo, Davao);
-Legazpi (2nd negative) waits for the credit reset. All four stacks finished on
-HyP3, but the comparison processing is blocked on a transient DNS/SSL dropout to
-the HyP3 API; re-run when connectivity returns (lean_fetch is resumable).
+Submitted single hotspot-burst stacks for the known-outcome cities and compared
+each burst rate to the GAMMA truth. Pricing confirmed ~1 credit/pair (10x cheaper).
+
+| City | GAMMA mm/yr | burst (single hotspot burst) mm/yr | burst verdict |
+|---|---|---|---|
+| Cebu / Mandaue | 10.1 | 6.6 | GO (same order; pinpoint subsidence) |
+| Metro Manila / Bulacan | 72.1 | 7.6 | NO-GO (off ~10x) |
+
+**A single burst cannot measure a regional subsidence bowl.** A burst is only
+~20x7 km. Metro Manila's bowl is larger (>270 km2 sinking >5 mm/yr), so the burst
+sits entirely inside it: the burst's own area-median -- the datum -- is itself the
+bowl rate, and the median-referenced differential collapses to ~zero (7.6, not 72).
+Cebu's subsidence is pinpoint (reclamation), so its burst still contains stable
+ground for the datum and reproduces the right order (6.6 vs 10.1).
+
+So burst at 1 credit/pair via single hotspot bursts is **not** a drop-in 10x
+replacement for GAMMA on the cities that matter most (Manila, Dagupan are bowls).
+The validation -- run before scaling, as it should be -- caught this and saved
+spending the next cycle's credits on a method that would 10x-under-report every
+regional bowl. Options to actually scale on burst: (a) multi-burst AOIs that span
+the bowl plus stable surrounding ground for the datum (costs ~as much as GAMMA,
+eroding the advantage); (b) tie the datum to external stable ground (GNSS/CORS)
+instead of the burst's own median; (c) keep GAMMA full-scene (validated) for
+bowls and reserve burst for pinpoint coastal/reclamation cities. The honest
+default for the GO-now scale-out is GAMMA full-scene with the lean fetch +
+median-datum + anchor-free gate, at ~770 credits/city.
+
+(Iloilo + Davao burst stacks finalizing; Iloilo is a useful second pinpoint check,
+Davao a coherence-limited control. They refine but do not change the conclusion.)
 
 ## Credits and what is next
 
