@@ -4,37 +4,50 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![InSAR: Sentinel-1 HyP3 + MintPy](https://img.shields.io/badge/InSAR-Sentinel--1%20HyP3%20%2B%20MintPy-success.svg)](docs/findings/metro-manila-v1.md)
 [![Validated: 3 metros vs Aslan 2024](https://img.shields.io/badge/validated-3%20metros%20vs%20Aslan%202024-success.svg)](docs/findings/phase2-multicity.md)
-[![e2e: 78 checks](https://img.shields.io/badge/e2e-78%20checks-success.svg)](tests/e2e.sh)
+[![e2e: 88 checks](https://img.shields.io/badge/e2e-88%20checks-success.svg)](tests/e2e.sh)
 [![Status: alpha](https://img.shields.io/badge/status-alpha-orange.svg)](README.md)
 
 > **sinkmap.ph** is the measured record of how fast the ground is sinking under
 > Philippine cities, from open Sentinel-1 satellite radar, 2016-2025, shown next to
-> where the floods actually hit. Three metros reproduce their published subsidence
-> rates within a factor of two (Metro Manila/Bulacan ~72 mm/yr vs published ~109,
-> Cebu ~10 vs 11, Iloilo ~10 vs 9), and the fastest sinking in Metro Manila is
-> **inland** in the Bulacan/Pampanga lowland, not the coast. Two more cities are
-> coherence-limited and reported as honest non-results, not forced numbers. A
+> where the floods actually hit. Six cities are measured across Luzon, the Visayas,
+> and Mindanao. Three reproduce their published rates within a factor of two (Metro
+> Manila/Bulacan ~72 mm/yr vs ~109, Cebu ~10 vs 11, Iloilo ~10 vs 9); three more are
+> coverage-gated with no published anchor (Dagupan ~20, Bacolod ~4, Tacloban ~3).
+> The fastest sinking in Metro Manila is **inland** in the Bulacan/Pampanga lowland,
+> not the coast, and Dagupan has lost about 35 cm at its hotspot since 2016. A
 > single-file MapLibre map carries a velocity layer, a 2016-2025 "watch it sink"
-> time slider, toggleable flood extents, a building-exposure read, and a methodology
-> page, with the coincidence-not-causation disclaimer throughout.
+> slider, toggleable flood extents, a building-exposure read, a surprising-findings
+> panel, and a methodology page, with the coincidence-not-causation disclaimer
+> throughout.
 
 [![sinkmap.ph walkthrough](docs/demo.gif)](https://sinkmap-ph.vercel.app)
 
 <sub>Real recording of the live map ([sinkmap-ph.vercel.app](https://sinkmap-ph.vercel.app),
-via `scripts/record_demo.py`): click Metro Manila for its measured rate, the published
-reference, the flood coincidence, and the buildings on fast-sinking ground; play
-"watch it sink" to accumulate 2016-2025 displacement (the readout climbs to ~325 mm);
-toggle a recent Sentinel-1 flood extent (it flies in and paints over the velocity
-layer). The apex **sinkmap.ph** goes live once its dot.ph A record points to Vercel.</sub>
+via `scripts/record_demo.py`): the six-city overview, the surprising-findings panel
+(the acceleration layer with on-map callouts), a measured-city card (Dagupan, ~20
+mm/yr, coverage-gated), "watch it sink" accumulating 2016-2025 displacement on Metro
+Manila (the readout climbs to ~325 mm), and a recent Sentinel-1 flood extent toggled
+on. The apex **sinkmap.ph** goes live once its dot.ph A record points to Vercel.</sub>
 
-**Status: validated, with a working map.** The pipeline runs end to end and three
-metros reproduce their published rates within a factor of two:
+**Status: validated, with a working map of six cities.** Three metros reproduce
+their published rates within a factor of two; three more (no published anchor) are
+measured and coverage-gated, spanning Luzon, the Visayas, and Mindanao:
 
 | City | Measured (2016-2025) | Published (Aslan 2024) |
 | --- | --- | --- |
 | Metro Manila / Bulacan | ~72 mm/yr | ~109 mm/yr |
 | Cebu / Mandaue | ~10 mm/yr | 11 mm/yr |
 | Iloilo | ~10 mm/yr | 9 mm/yr |
+| Dagupan / Pangasinan | ~20 mm/yr (peak field ~35; ~35 cm lost since 2016) | no published rate |
+| Bacolod / Negros | ~4 mm/yr | no published rate |
+| Tacloban / Leyte | ~3 mm/yr (marginal coverage) | no published rate |
+
+Dagupan, Bacolod, and Tacloban have no Aslan anchor, so the map shows them with a
+"measured (coverage-gated)" badge, not "validated". A scale-out feasibility scorer
+(`scripts/feasibility.py`) ranks ~120 PH cities for the current method, and a burst-
+InSAR test showed burst is 10x cheaper but cannot measure a regional subsidence
+bowl from a single burst (Manila burst 7.6 vs GAMMA 72), so the scale-out stays on
+full-scene GAMMA. See `docs/findings/`.
 
 The fastest sinking in Metro Manila is inland in the Bulacan/Pampanga lowland
 (around 15.18 deg N), consistent with the published maximum location, and it holds
@@ -124,7 +137,7 @@ boundary is the honest core of this project:
 - **`docs/planning/`**: the locked spec (`SCOPE.md`, `CITIES.md`,
   `METHOD-decomposition.md`, `BUILD-PROMPT.md`).
 - **`tests/`**: pytest over the LOS->vertical math, the GO/NO-GO gate band, the SBAS
-  pairing, and the AOI registry invariants; plus `e2e.sh`, a 78-check behavioral
+  pairing, and the AOI registry invariants; plus `e2e.sh`, a 88-check behavioral
   suite that drives the live map (loading, the sink-lapse slider/play, the flood
   toggles, exposure, place cards, the surprising-findings panel with its
   acceleration / tilt / compound-exposure layers and callouts, EN/TL). Run
@@ -178,7 +191,7 @@ Build the web layers from the MintPy outputs and serve the map locally:
 SINKMAP_EE_KEY=~/Desktop/leaves-ph/.ee-key.json .venv/bin/python scripts/make_flood_layers.py
 
 make serve     # Range-capable server on :8788, then open web/index.html
-make e2e       # 78-check behavioral suite against the running map
+make e2e       # 88-check behavioral suite against the running map
 ```
 
 ![sinkmap.ph watching Metro Manila sink, 2016-2025](docs/sink-lapse.gif)
