@@ -1,9 +1,11 @@
 """Record the walkthrough GIF from the real map (docs/demo.gif).
 
-Drives the live site with agent-browser: overview -> click Metro Manila (place
-card) -> Watch it sink (2016 -> 2025 with the cumulative-mm readout) -> toggle a
-recent flood extent (flies to it and paints it over the velocity layer). Real
-recording of the actual map, never a mockup.
+Drives the live site with agent-browser, leading with the story rail (the
+first-touch insight sequence): overview with the rail on screen -> tap the rail
+to fly to the acceleration layer (orange = speeding up, purple = slowing) with
+callouts -> walk to the next finding -> Find your city (Dagupan) place card ->
+Watch it sink (2016 -> 2025) -> toggle a recent flood extent. Real recording of
+the actual map, never a mockup.
 
   make serve &
   python3 scripts/record_demo.py
@@ -25,15 +27,16 @@ def ev(js): ab("eval", js)
 
 def main():
     FR.mkdir(parents=True, exist_ok=True)
-    ab("open", URL); ab("wait", "3000")
-    ev("window.map.jumpTo({center:[122.6,12.4],zoom:5.0})"); ab("wait", "900"); shot("f0.png")    # overview, 6 cities
-    ev("document.getElementById('fopen').click()"); ab("wait", "1100"); shot("f1.png")            # surprising-findings panel
-    ev("document.querySelectorAll('#flist .fcard')[0].click()"); ab("wait", "1700"); shot("f2.png")  # acceleration: layer + callouts
-    shot("f3.png")                                                                                # hold accel
-    ev("document.getElementById('fclose').click();document.querySelectorAll('.pin')[3].click()")  # close panel, Dagupan card
-    ab("wait", "1700"); shot("f4.png")
-    ev("window.map.jumpTo({center:[120.35,16.05],zoom:10})"); ab("wait", "1000"); shot("f5.png")  # Dagupan velocity (new city)
-    ev("document.querySelectorAll('.pin')[0].click();window.map.jumpTo({center:[120.98,15.05],zoom:8.9})")
+    ab("set", "viewport", "1280", "800")
+    ab("open", URL); ab("wait", "3200")
+    shot("f0.png")                                                                                # overview: the rail leads, 1/10
+    ev("document.getElementById('rail-card').click()"); ab("wait", "1900"); shot("f1.png")        # tap rail -> accel layer + callouts
+    shot("f2.png")                                                                                # hold accel
+    ev("document.getElementById('rail-next').click()"); ab("wait", "1700"); shot("f3.png")        # walk to the next finding (compound)
+    ev("var s=document.getElementById('findcity');s.value='c:dagupan';s.dispatchEvent(new Event('change'))")
+    ab("wait", "1700"); shot("f4.png")                                                            # find your city -> Dagupan card
+    shot("f5.png")                                                                                # hold Dagupan
+    ev("document.getElementById('cd-close').click();document.querySelectorAll('.pin')[0].click();window.map.jumpTo({center:[120.98,15.05],zoom:8.9})")
     ab("wait", "1200")
     ev("document.getElementById('mode-l').click()"); ab("wait", "1100"); shot("f6.png")           # watch Manila sink @2016
     for k, fr in enumerate([3, 7], start=7):                                                       # play it sink
