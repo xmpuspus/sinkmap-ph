@@ -244,6 +244,7 @@ const CN = {
     findcity: "Find your city",
     rkick: "Key findings", rshow: "Show on map", rshowing: "Showing on map",
     ropen: "Key findings", rfly: "Tap to fly there",
+    load_fail: "Findings could not load. Please reload the page.",
   },
   tl: {
     sub: "Gaano kabilis lumulubog ang lupa sa mga lungsod ng Pilipinas, sinukat mula sa Sentinel-1 satellite radar, 2016 hanggang 2025.",
@@ -265,6 +266,7 @@ const CN = {
     findcity: "Hanapin ang lungsod mo",
     rkick: "Mga natuklasan", rshow: "Ipakita sa mapa", rshowing: "Ipinapakita sa mapa",
     ropen: "Mga natuklasan", rfly: "Pindutin para lumipad",
+    load_fail: "Hindi ma-load ang mga natuklasan. Paki-reload ang pahina.",
   }
 };
 let LANG = "en";
@@ -274,7 +276,7 @@ let RAIL_I = 0;
 window.__diag = { ready:false, cities:0, layers:0, mode:"v", frame:0, playing:false, overlay:{}, floods:0,
   findings:0, findingLayers:0, activeFinding:null,
   findingLayerVisible:{ accel:false, tilt:false, compound:false }, callouts:0,
-  railOpen:true, railIndex:0 };
+  railOpen:true, railIndex:0, findingsError:false };
 
 const NAMES = {
   "metro-manila":"Metro Manila / Bulacan", "cebu-mandaue":"Cebu / Mandaue",
@@ -604,28 +606,46 @@ map.on("load", async ()=>{
     }
     if (fl.events.length) document.getElementById("floods").style.display="block";
   } catch(e){ /* flood layers optional */ }
-  // surprising-findings story panel + its analysis layers
+  // surprising-findings story panel + its analysis layers.
+  // Render the findings TEXT first, independent of the map layers: a layer add
+  // that throws (a WebGL/timing hiccup) must never leave the rail and drawer blank.
+  async function loadFindings(tries){
+    for (let i=0;i<tries;i++){
+      try { return await (await fetch("data/findings.json")).json(); }
+      catch(e){ if (i===tries-1) throw e; await new Promise(r=>setTimeout(r, 400)); }
+    }
+  }
   try {
-    FINDINGS = await (await fetch("data/findings.json")).json();
+    FINDINGS = await loadFindings(3);
+    window.__diag.findings = FINDINGS.findings.length;
+    renderFindings(); renderRail();                 // text is up no matter what the map does next
     for (const [key, ly] of Object.entries(FINDINGS.layers)){
       if (!ly.png) continue;  // image overlays (accel, tilt); compound handled below
-      const b = ly.bounds;
-      map.addSource("fl-"+key, { type:"image", url:ly.png,
-        coordinates:[[b.west,b.north],[b.east,b.north],[b.east,b.south],[b.west,b.south]] });
-      map.addLayer({ id:"fl-"+key, type:"raster", source:"fl-"+key,
-        layout:{ visibility:"none" }, paint:{ "raster-opacity":0.9 } });
-      window.__diag.findingLayers++;
+      try {
+        const b = ly.bounds;
+        map.addSource("fl-"+key, { type:"image", url:ly.png,
+          coordinates:[[b.west,b.north],[b.east,b.north],[b.east,b.south],[b.west,b.south]] });
+        map.addLayer({ id:"fl-"+key, type:"raster", source:"fl-"+key,
+          layout:{ visibility:"none" }, paint:{ "raster-opacity":0.9 } });
+        window.__diag.findingLayers++;
+      } catch(e){ console.warn("finding layer failed:", key, e); }
     }
-    const cmp = FINDINGS.layers.compound;
-    if (cmp && cmp.geojson){
-      map.addSource("fl-compound", { type:"geojson", data:cmp.geojson });
-      map.addLayer({ id:"fl-compound", type:"circle", source:"fl-compound", layout:{ visibility:"none" },
-        paint:{ "circle-radius":3.2, "circle-color":"#7a0177", "circle-opacity":0.75,
-                "circle-stroke-width":0.5, "circle-stroke-color":"#fff" } });
-    }
-    window.__diag.findings = FINDINGS.findings.length;
-    renderFindings(); renderRail();
-  } catch(e){ /* findings optional */ }
+    try {
+      const cmp = FINDINGS.layers.compound;
+      if (cmp && cmp.geojson){
+        map.addSource("fl-compound", { type:"geojson", data:cmp.geojson });
+        map.addLayer({ id:"fl-compound", type:"circle", source:"fl-compound", layout:{ visibility:"none" },
+          paint:{ "circle-radius":3.2, "circle-color":"#7a0177", "circle-opacity":0.75,
+                  "circle-stroke-width":0.5, "circle-stroke-color":"#fff" } });
+      }
+    } catch(e){ console.warn("compound layer failed:", e); }
+  } catch(e){
+    console.warn("findings failed to load:", e);            // never a silent blank: tell the user to reload
+    const msg = CN[LANG].load_fail;
+    const fl = document.getElementById("flist"); if (fl) fl.innerHTML = `<p style="font-size:12px;color:var(--muted);padding:12px;line-height:1.5;">${msg}</p>`;
+    const rt = document.querySelector("#rail .r-title"); if (rt) rt.textContent = msg;
+    window.__diag.findingsError = true;
+  }
   window.__diag.ready = true;
 });
 </script>
