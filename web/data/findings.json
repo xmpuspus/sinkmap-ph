@@ -87,12 +87,12 @@
       "id": "acceleration",
       "layer": "accel",
       "tag": {
-        "en": "Acceleration",
-        "tl": "Pagbilis"
+        "en": "Metro Manila / Bulacan",
+        "tl": "Metro Manila / Bulacan"
       },
       "title": {
-        "en": "Past the peak, but the field is still spreading",
-        "tl": "Lampas na sa rurok, pero lumalawak pa ang lupa"
+        "en": "Past its peak, but the sinking is spreading wider",
+        "tl": "Lampas na sa rurok, pero mas lumalawak ang paglubog"
       },
       "stat": {
         "en": "294 km² speeding up vs 244 km² slowing",
@@ -136,12 +136,12 @@
       "id": "compound",
       "layer": "compound",
       "tag": {
-        "en": "Compound risk",
-        "tl": "Dobleng panganib"
+        "en": "Metro Manila",
+        "tl": "Metro Manila"
       },
       "title": {
-        "en": "Sinking fast and flood-prone at the same time",
-        "tl": "Mabilis lumulubog at madaling bahain nang sabay"
+        "en": "Half of the fast-sinking buildings are flood-prone too",
+        "tl": "Kalahati ng mabilis lumulubog na gusali, madali ring bahain"
       },
       "stat": {
         "en": "46% of fast-sinking buildings are also flood-prone",
@@ -163,12 +163,12 @@
     {
       "id": "footprint",
       "tag": {
-        "en": "Footprint",
-        "tl": "Sakop"
+        "en": "Central Luzon",
+        "tl": "Gitnang Luzon"
       },
       "title": {
-        "en": "The 10 cm subsidence footprint grew from nothing",
-        "tl": "Lumaki mula sa wala ang sakop ng 10 cm na paglubog"
+        "en": "The deep-sinking zone spread out from almost nothing",
+        "tl": "Kumalat ang malalim na paglubog mula sa halos wala"
       },
       "stat": {
         "en": "~0 to ~228 km² since 2016 (peak 311 km²)",
@@ -190,12 +190,12 @@
     {
       "id": "municipality",
       "tag": {
-        "en": "Most exposed",
-        "tl": "Pinaka-apektado"
+        "en": "San Miguel, Bulacan",
+        "tl": "San Miguel, Bulacan"
       },
       "title": {
-        "en": "One town carries most of the exposed ground: San Miguel",
-        "tl": "Isang bayan ang may pinakamaraming apektadong lupa: San Miguel"
+        "en": "One town holds the most at-risk ground",
+        "tl": "Isang bayan ang may pinakamaraming apektadong lupa"
       },
       "stat": {
         "en": "San Miguel, Bulacan: 43 km² sinking fast, 17 km² also flood-prone",
@@ -228,12 +228,12 @@
     {
       "id": "decoupling",
       "tag": {
-        "en": "Decoupled",
-        "tl": "Magkahiwalay"
+        "en": "Metro Manila",
+        "tl": "Metro Manila"
       },
       "title": {
-        "en": "The deepest floods are not the fastest sinking",
-        "tl": "Ang pinakamalalim na baha ay hindi ang pinakamabilis lumubog"
+        "en": "The deepest floods aren't where the ground sinks fastest",
+        "tl": "Ang pinakamalalim na baha, hindi ang pinakamabilis lumubog"
       },
       "stat": {
         "en": "most fast-sinking ground is in shallow or medium flood zones, not the deepest",
@@ -256,11 +256,11 @@
       "id": "tilt",
       "layer": "tilt",
       "tag": {
-        "en": "Differential tilt",
-        "tl": "Hindi pantay"
+        "en": "Metro Manila",
+        "tl": "Metro Manila"
       },
       "title": {
-        "en": "Uneven sinking is what breaks roads and pipes",
+        "en": "It is the uneven sinking that breaks roads and pipes",
         "tl": "Ang hindi pantay na paglubog ang sumisira ng kalsada at tubo"
       },
       "stat": {
@@ -283,12 +283,12 @@
     {
       "id": "sea_vs_land",
       "tag": {
-        "en": "Land vs sea",
-        "tl": "Lupa vs dagat"
+        "en": "Bulacan",
+        "tl": "Bulacan"
       },
       "title": {
-        "en": "The land drops far faster than the sea rises",
-        "tl": "Mas mabilis bumaba ang lupa kaysa pagtaas ng dagat"
+        "en": "The land is dropping far faster than the sea is rising",
+        "tl": "Mas mabilis bumababa ang lupa kaysa pagtaas ng dagat"
       },
       "stat": {
         "en": "land ~72 mm/yr vs sea ~5-7 mm/yr",
@@ -311,13 +311,13 @@
     {
       "id": "dagupan",
       "tag": {
-        "en": "New city",
-        "tl": "Bagong lungsod"
+        "en": "Dagupan, Pangasinan",
+        "tl": "Dagupan, Pangasinan"
       },
       "layer": "accel-dagupan",
       "title": {
-        "en": "Dagupan: the second fast-sinking delta",
-        "tl": "Dagupan: pangalawang mabilis lumubog na delta"
+        "en": "The country's second fastest-sinking delta",
+        "tl": "Pangalawang pinakamabilis lumubog na delta sa bansa"
       },
       "stat": {
         "en": "about 35 cm lost at the hotspot since 2016",
@@ -350,12 +350,12 @@
     {
       "id": "regime",
       "tag": {
-        "en": "Regime",
-        "tl": "Uri ng lupa"
+        "en": "Nationwide",
+        "tl": "Buong bansa"
       },
       "title": {
-        "en": "It is the deltas, not the cities",
-        "tl": "Ang mga delta, hindi ang mga lungsod"
+        "en": "It is the river deltas that sink, not the cities",
+        "tl": "Ang mga delta ng ilog ang lumulubog, hindi ang mga lungsod"
       },
       "stat": {
         "en": "deltas sink about 10x faster than island cities",
@@ -377,12 +377,12 @@
     {
       "id": "deceleration",
       "tag": {
-        "en": "Past peak",
-        "tl": "Lampas sa rurok"
+        "en": "Nationwide",
+        "tl": "Buong bansa"
       },
       "title": {
-        "en": "The fast hotspots are past their peak",
-        "tl": "Lampas na sa rurok ang mabibilis na hotspot"
+        "en": "Every fast-sinking hotspot is now past its peak",
+        "tl": "Lampas na sa rurok ang bawat mabilis na hotspot"
       },
       "stat": {
         "en": "every measured hotspot slowed, 2016-20 vs 2021-25",
