@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Behavioral e2e for the sinkmap.ph web map (122 checks) via agent-browser.
+# Behavioral e2e for the sinkmap.ph web map (124 checks) via agent-browser.
 # Drives the real map and asserts loading, the sink-lapse slider/play, the flood
 # overlays, exposure, place cards, the surprising-findings panel (acceleration /
 # tilt / compound-exposure layers + callouts), the story rail (preview/commit/walk/
@@ -109,6 +109,8 @@ chk fl_accel_dagupan "!!map.getLayer('fl-accel-dagupan')"
 chk fl_accel_hidden_init "map.getLayoutProperty('fl-accel','visibility')" none
 chk drawer_opens "(function(){document.getElementById('fopen').click();return document.getElementById('findings').classList.contains('open')})()"
 chk cards_10 "document.querySelectorAll('#flist .fcard').length===10"
+# each finding leads with a location dateline (news-headline format)
+chk dateline_location "document.querySelectorAll('#flist .fcard')[0].querySelector('.ftag').innerText.toLowerCase().indexOf('metro manila')>=0"
 # computed-value regression pins (update with the data, never loosen)
 chk accel_stat_294 "document.querySelectorAll('#flist .fcard')[0].querySelector('.fstat').innerText.indexOf('294')>=0"
 chk compound_stat_46 "document.querySelectorAll('#flist .fcard')[1].querySelector('.fstat').innerText.indexOf('46')>=0"
@@ -139,8 +141,9 @@ chk lapse_clears_finding "(function(){document.querySelectorAll('#flist .fcard')
 chk lapse_hides_finding_layer "map.getLayoutProperty('fl-accel','visibility')" none
 chk back_to_rate "(function(){document.getElementById('mode-v').click();return window.__diag.mode})()" v
 chk dagupan_finding_layer "(function(){document.querySelectorAll('#flist .fcard')[7].click();return map.getLayoutProperty('fl-accel-dagupan','visibility')})()" visible
-chk findings_tl "(function(){document.getElementById('ftl').click();return document.querySelector('#flist .fcard .ftag').innerText.toLowerCase().indexOf('pagbilis')>=0})()"
-chk findings_en "(function(){document.getElementById('fen').click();return document.querySelector('#flist .fcard .ftag').innerText.toLowerCase().indexOf('acceleration')>=0})()"
+# language toggles the headline (the dateline tag is a place name, same in both)
+chk findings_tl "(function(){document.getElementById('ftl').click();return document.querySelector('#flist .fcard h3').innerText.toLowerCase().indexOf('rurok')>=0})()"
+chk findings_en "(function(){document.getElementById('fen').click();return document.querySelector('#flist .fcard h3').innerText.toLowerCase().indexOf('peak')>=0})()"
 chk drawer_closes "(function(){document.getElementById('fclose').click();return document.getElementById('findings').classList.contains('open')})()" false
 
 # --- i18n ---
@@ -152,7 +155,8 @@ agent-browser open "$BASE" >/dev/null 2>&1
 for i in {1..30}; do [ "$(ev 'window.__diag&&window.__diag.ready')" = "true" ] && break; agent-browser wait 500 >/dev/null 2>&1; done
 chk rail_open_init "window.__diag.railOpen"
 chk rail_index_0 "window.__diag.railIndex===0"
-chk rail_card_accel "document.querySelector('#rail .r-tag').innerText.toLowerCase().indexOf('acceleration')>=0"
+chk rail_dateline "document.querySelector('#rail .r-tag').innerText.toLowerCase().indexOf('metro manila')>=0"
+chk rail_card_accel "document.querySelector('#rail .r-title').innerText.toLowerCase().indexOf('peak')>=0"
 chk rail_blurb_present "document.querySelector('#rail .r-blurb').innerText.length>40"
 # stepping is preview-only until the user commits (calm: no surprise camera motion on load)
 chk rail_next_preview "(function(){document.getElementById('rail-next').click();return window.__diag.railIndex})()" 1
