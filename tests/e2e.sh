@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Behavioral e2e for the sinkmap.ph web map (119 checks) via agent-browser.
+# Behavioral e2e for the sinkmap.ph web map (122 checks) via agent-browser.
 # Drives the real map and asserts loading, the sink-lapse slider/play, the flood
 # overlays, exposure, place cards, the surprising-findings panel (acceleration /
 # tilt / compound-exposure layers + callouts), the story rail (preview/commit/walk/
@@ -175,6 +175,18 @@ chk findcity_groups "document.querySelectorAll('#findcity optgroup').length===2"
 chk findcity_measured "(function(){var s=document.getElementById('findcity');s.value='c:dagupan';s.dispatchEvent(new Event('change'));return document.getElementById('cd-name').innerText.indexOf('Dagupan')>=0})()"
 chk findcity_limited "(function(){document.getElementById('cd-close').click();var s=document.getElementById('findcity');s.value='l:legazpi';s.dispatchEvent(new Event('change'));return document.getElementById('cd-body').innerText.toLowerCase().indexOf('coherence')>=0})()"
 chk findcity_reset "document.getElementById('findcity').value===''"
+
+# --- resilience: if findings.json fails, show a fallback message, never a silent blank ---
+# (the original empty-panel bug: the text render was trapped in the same try as the map
+#  layer setup, so any failure blanked both the drawer and the rail)
+agent-browser network route '**/findings.json' --abort >/dev/null 2>&1
+agent-browser open "$BASE" >/dev/null 2>&1
+for i in {1..40}; do [ "$(ev 'window.__diag&&window.__diag.ready')" = "true" ] && break; agent-browser wait 300 >/dev/null 2>&1; done
+agent-browser wait 1600 >/dev/null 2>&1
+chk findings_error_flag "window.__diag.findingsError"
+chk fail_fallback_drawer "(function(){document.getElementById('fopen').click();return document.getElementById('flist').innerText.toLowerCase().indexOf('reload')>=0})()"
+chk fail_fallback_rail "document.querySelector('#rail .r-title').innerText.toLowerCase().indexOf('reload')>=0"
+agent-browser network unroute '**/findings.json' >/dev/null 2>&1
 
 echo "----------------------------------------"
 echo "RESULT: $pass passed, $fail failed (of $((pass+fail)))"
